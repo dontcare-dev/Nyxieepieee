@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useLanyard } from 'use-lanyard';
 
 const styles = `
 @import url('https://fonts.googleapis.com/css2?family=Chewy&display=swap');
@@ -345,6 +344,52 @@ const SOCIALS = {
   server: 'https://discord.gg/Y7mKtX9Bd',
 };
 
+function useLanyard(userId) {
+  const [data, setData] = useState(null);
+  const wsRef = useRef(null);
+  const hbRef = useRef(null);
+
+  useEffect(() => {
+    let alive = true;
+    let reconnectTimer = null;
+
+    const connect = () => {
+      const ws = new WebSocket('wss://api.lanyard.rest/socket');
+      wsRef.current = ws;
+
+      ws.onmessage = (e) => {
+        const msg = JSON.parse(e.data);
+        if (msg.op === 1) {
+          ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: userId } }));
+          clearInterval(hbRef.current);
+          hbRef.current = setInterval(() => {
+            if (ws.readyState === 1) ws.send(JSON.stringify({ op: 3 }));
+          }, msg.d.heartbeat_interval);
+        }
+        if (msg.op === 0) setData(msg.d);
+      };
+
+      ws.onclose = () => {
+        clearInterval(hbRef.current);
+        if (alive) reconnectTimer = setTimeout(connect, 3000);
+      };
+
+      ws.onerror = () => ws.close();
+    };
+
+    connect();
+
+    return () => {
+      alive = false;
+      clearTimeout(reconnectTimer);
+      clearInterval(hbRef.current);
+      if (wsRef.current) wsRef.current.close();
+    };
+  }, [userId]);
+
+  return data;
+}
+
 function useYouTubeAudio(play) {
   const playerRef = useRef(null);
 
@@ -451,6 +496,7 @@ function Avatar({ presence }) {
   useEffect(() => {
     if (!presence) return;
     const u = presence.discord_user;
+    if (!u) return;
     setImg(
       u.avatar
         ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png?size=256`
@@ -478,11 +524,13 @@ function Avatar({ presence }) {
 function Activity({ presence }) {
   if (!presence) return null;
 
-  const { activities, spotify, listening_to_spotify } = presence;
-  const custom = activities?.find((a) => a.type === 4);
-  const game = activities?.find((a) => a.type !== 4 && a.name !== 'Spotify');
+  const activities = presence.activities || [];
+  const spotify = presence.spotify;
+  const listening = presence.listening_to_spotify;
+  const custom = activities.find((a) => a.type === 4);
+  const game = activities.find((a) => a.type !== 4 && a.name !== 'Spotify');
 
-  if (listening_to_spotify && spotify) {
+  if (listening && spotify) {
     return (
       <div className="activity">
         <img src={spotify.album_art_url} alt="" className="activity-icon" />
@@ -498,11 +546,11 @@ function Activity({ presence }) {
   }
 
   if (game) {
-    const img = game.assets?.large_image;
-    const src = img
-      ? img.startsWith('mp:')
-        ? `https://media.discordapp.net/${img.slice(3)}`
-        : `https://cdn.discordapp.com/app-assets/${game.application_id}/${img}.png`
+    const im = game.assets && game.assets.large_image;
+    const src = im
+      ? im.startsWith('mp:')
+        ? `https://media.discordapp.net/${im.slice(3)}`
+        : `https://cdn.discordapp.com/app-assets/${game.application_id}/${im}.png`
       : null;
 
     return (
@@ -522,7 +570,7 @@ function Activity({ presence }) {
         <div className="activity-icon" />
         <div className="activity-text">
           <p className="activity-name">
-            {custom.emoji?.name} {custom.state}
+            {(custom.emoji && custom.emoji.name) || ''} {custom.state}
           </p>
           <p className="activity-sub">Custom Status</p>
         </div>
@@ -538,7 +586,7 @@ function Socials() {
 
   const copyDiscord = () => {
     const id = SOCIALS.discord;
-    if (navigator.clipboard?.writeText) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(id).then(() => {
         setCopied(true);
         setTimeout(() => setCopied(false), 1500);
@@ -664,4 +712,4 @@ export default function App() {
       )}
     </>
   );
-            }
+  }
