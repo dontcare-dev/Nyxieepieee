@@ -26,7 +26,7 @@ position:relative;
 overflow:hidden;
 }
 
-.bg-video{
+.bg-gif{
 position:fixed;
 top:50%;
 left:50%;
@@ -38,16 +38,15 @@ transform:translate(-50%,-50%);
 object-fit:cover;
 z-index:0;
 pointer-events:none;
-opacity:.55;
-filter:brightness(.5) saturate(1.1);
+opacity:.85;
 }
 
 .bg-overlay{
 position:fixed;
 inset:0;
 background:
-radial-gradient(circle at 50% 50%, rgba(0,0,0,.1), rgba(0,0,0,.7) 100%),
-linear-gradient(180deg, rgba(7,7,10,.6), rgba(7,7,10,.9));
+radial-gradient(circle at 50% 50%, rgba(0,0,0,.35), rgba(0,0,0,.85) 100%),
+linear-gradient(180deg, rgba(7,7,10,.5), rgba(7,7,10,.85));
 z-index:1;
 pointer-events:none;
 }
@@ -133,7 +132,7 @@ position:relative;
 z-index:2;
 width:100%;
 max-width:380px;
-background:rgba(20,20,24,.55);
+background:rgba(20,20,24,.72);
 backdrop-filter:blur(20px) saturate(140%);
 -webkit-backdrop-filter:blur(20px) saturate(140%);
 border:1px solid rgba(255,255,255,.08);
@@ -319,6 +318,16 @@ transition:background .3s ease,color .3s ease;
 
 .music-toggle:hover{background:rgba(255,255,255,.1);color:#fff}
 
+#ytAudio{
+position:fixed;
+top:-9999px;
+left:-9999px;
+width:1px;
+height:1px;
+opacity:0;
+pointer-events:none;
+}
+
 @media (prefers-reduced-motion:reduce){
 *,*::before,*::after{
 transition-duration:.01ms !important;
@@ -343,6 +352,77 @@ const SOCIALS = {
   instagram: 'https://instagram.com/Deathyyyyyyyyyy',
   server: 'https://discord.gg/Y7mKtX9Bd',
 };
+
+let ytPlayer = null;
+
+function loadYouTubeAPI() {
+  return new Promise((resolve) => {
+    if (window.YT && window.YT.Player) {
+      resolve();
+      return;
+    }
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => {
+      if (prev) prev();
+      resolve();
+    };
+    if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(tag);
+    }
+  });
+}
+
+async function createPlayer() {
+  await loadYouTubeAPI();
+  if (ytPlayer) return ytPlayer;
+  ytPlayer = new window.YT.Player('ytAudio', {
+    height: '1',
+    width: '1',
+    videoId: YT_VIDEO_ID,
+    playerVars: {
+      autoplay: 0,
+      controls: 0,
+      disablekb: 1,
+      fs: 0,
+      modestbranding: 1,
+      rel: 0,
+      playsinline: 1,
+      iv_load_policy: 3,
+      loop: 1,
+      playlist: YT_VIDEO_ID,
+    },
+    events: {
+      onReady: (e) => {
+        e.target.setVolume(55);
+      },
+      onStateChange: (e) => {
+        if (e.data === 0) {
+          e.target.seekTo(0);
+          e.target.playVideo();
+        }
+      },
+    },
+  });
+  return ytPlayer;
+}
+
+function play() {
+  if (!ytPlayer) return;
+  try {
+    ytPlayer.unMute();
+    ytPlayer.setVolume(55);
+    ytPlayer.playVideo();
+  } catch {}
+}
+
+function pause() {
+  if (!ytPlayer) return;
+  try {
+    ytPlayer.pauseVideo();
+  } catch {}
+}
 
 function useLanyard(userId) {
   const [data, setData] = useState(null);
@@ -388,70 +468,6 @@ function useLanyard(userId) {
   }, [userId]);
 
   return data;
-}
-
-function useYouTubeAudio(play) {
-  const playerRef = useRef(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const init = () => {
-      if (cancelled || !window.YT || !window.YT.Player) return;
-      if (playerRef.current) return;
-
-      playerRef.current = new window.YT.Player('yt-audio', {
-        height: '1',
-        width: '1',
-        videoId: YT_VIDEO_ID,
-        playerVars: {
-          autoplay: 1,
-          controls: 0,
-          disablekb: 1,
-          fs: 0,
-          modestbranding: 1,
-          rel: 0,
-          playsinline: 1,
-        },
-        events: {
-          onReady: (e) => {
-            if (play) {
-              e.target.setVolume(60);
-              e.target.playVideo();
-            }
-          },
-        },
-      });
-    };
-
-    if (!window.YT) {
-      const tag = document.createElement('script');
-      tag.src = 'https://www.youtube.com/iframe_api';
-      window.onYouTubeIframeAPIReady = init;
-      document.head.appendChild(tag);
-    } else {
-      init();
-    }
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    const p = playerRef.current;
-    if (!p || !p.playVideo) return;
-    try {
-      if (play) {
-        p.setVolume(60);
-        p.playVideo();
-      } else {
-        p.pauseVideo();
-      }
-    } catch {}
-  }, [play]);
-
-  return playerRef;
 }
 
 function ProgressBar({ start, end }) {
@@ -658,32 +674,48 @@ export default function App() {
   const [mounted, setMounted] = useState(false);
   const [musicOn, setMusicOn] = useState(true);
   const presence = useLanyard('1429093326505640016');
-  const playerRef = useYouTubeAudio(entered && musicOn);
 
   useEffect(() => {
-    if (entered) {
-      requestAnimationFrame(() => setMounted(true));
-    }
+    createPlayer();
+  }, []);
+
+  useEffect(() => {
+    if (!entered) return;
+    requestAnimationFrame(() => setMounted(true));
   }, [entered]);
+
+  const enter = () => {
+    setEntered(true);
+    if (musicOn) play();
+  };
+
+  const toggleMusic = () => {
+    setMusicOn((v) => {
+      const next = !v;
+      if (next) play();
+      else pause();
+      return next;
+    });
+  };
 
   return (
     <>
       <style>{styles}</style>
 
       <img
-        className="bg-video"
+        className="bg-gif"
         src="https://i.ibb.co/TBNJGXG8/ezgif-83bbce0c070fca6e.gif"
         alt=""
         aria-hidden="true"
       />
       <div className="bg-overlay" />
 
-      <div id="yt-audio" style={{ position: 'absolute', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }} />
+      <div id="ytAudio" />
 
       <div className={`gate ${entered ? 'hidden' : ''}`}>
         <h1 className="gate-title">Nyxieepieee</h1>
         <p className="gate-sub">Meowmeow</p>
-        <button className="enter-btn" onClick={() => setEntered(true)}>
+        <button className="enter-btn" onClick={enter}>
           Enter
         </button>
       </div>
@@ -704,7 +736,7 @@ export default function App() {
       {entered && (
         <button
           className="music-toggle"
-          onClick={() => setMusicOn((v) => !v)}
+          onClick={toggleMusic}
           aria-label={musicOn ? 'Mute music' : 'Unmute music'}
         >
           {musicOn ? '♪' : '✕'}
@@ -712,4 +744,4 @@ export default function App() {
       )}
     </>
   );
-  }
+          }
