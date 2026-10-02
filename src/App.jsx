@@ -224,7 +224,6 @@ justify-content:center;
 overflow:hidden;
 border-radius:8px;
 margin:0 4px;
-background:rgba(14,14,18,1);
 }
 
 .topbar-gif img{
@@ -234,7 +233,6 @@ max-width:100%;
 object-fit:contain;
 display:block;
 border-radius:8px;
-mix-blend-mode:darken;
 }
 
 .topbar-menu{
@@ -622,7 +620,7 @@ const YT_VOLUME = 55;
 const DISCORD_ID = '1429093326505640016';
 const LASTFM_USER = 'Nyxieepie';
 const LASTFM_KEY = '93b1e25b8d9f0ff55175904af9b336b7';
-const TOPBAR_GIF = 'https://i.ibb.co/Y4wmz9j1/d2e3f3be4087072eb36f6678c83db41a.gif';
+const TOPBAR_GIF = 'https://i.ibb.co/Xx6DndSg/1edbf144909f2bbfcff412393422984c-1.gif';
 
 const SOCIALS = {
   instagram: 'https://instagram.com/Deathyyyyyyyyyy',
@@ -1231,4 +1229,4 @@ export default function App() {
       )}
     </>
   );
-          }
+               }
