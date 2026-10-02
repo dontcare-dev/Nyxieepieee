@@ -21,7 +21,7 @@ min-height:100vh;
 display:flex;
 align-items:center;
 justify-content:center;
-padding:32px 20px;
+padding:96px 20px 32px;
 position:relative;
 overflow:hidden;
 }
@@ -54,7 +54,7 @@ pointer-events:none;
 .gate{
 position:fixed;
 inset:0;
-z-index:10;
+z-index:50;
 display:flex;
 flex-direction:column;
 align-items:center;
@@ -126,6 +126,149 @@ transform:translateY(-2px);
 }
 
 .enter-btn:active{transform:translateY(0)}
+
+.topbar{
+position:fixed;
+top:14px;
+left:50%;
+transform:translateX(-50%);
+width:calc(100% - 32px);
+max-width:420px;
+z-index:30;
+background:rgba(14,14,18,.82);
+border:1px solid rgba(255,255,255,.08);
+border-radius:999px;
+padding:8px 12px 8px 8px;
+display:flex;
+align-items:center;
+gap:10px;
+backdrop-filter:blur(20px) saturate(140%);
+-webkit-backdrop-filter:blur(20px) saturate(140%);
+box-shadow:0 8px 32px rgba(0,0,0,.5);
+}
+
+.topbar-avatar-wrap{
+position:relative;
+flex-shrink:0;
+width:36px;
+height:36px;
+}
+
+.topbar-avatar{
+width:36px;
+height:36px;
+border-radius:50%;
+object-fit:cover;
+display:block;
+border:1px solid rgba(255,255,255,.1);
+background:rgba(255,255,255,.05);
+}
+
+.topbar-status{
+position:absolute;
+bottom:0;
+right:0;
+width:11px;
+height:11px;
+border-radius:50%;
+border:2px solid #0e0e12;
+}
+
+.topbar-title{
+flex:1;
+font-size:1.15rem;
+color:#fff;
+letter-spacing:.02em;
+}
+
+.topbar-menu{
+width:36px;
+height:36px;
+border-radius:50%;
+background:transparent;
+border:none;
+cursor:pointer;
+display:flex;
+align-items:center;
+justify-content:center;
+color:rgba(255,255,255,.7);
+transition:background .3s ease,color .3s ease;
+}
+
+.topbar-menu:hover{background:rgba(255,255,255,.06);color:#fff}
+
+.topbar-menu svg{width:20px;height:20px;fill:currentColor}
+
+.drawer{
+position:fixed;
+top:0;
+left:0;
+right:0;
+z-index:29;
+padding:80px 16px 20px;
+background:rgba(10,10,14,.96);
+backdrop-filter:blur(24px);
+-webkit-backdrop-filter:blur(24px);
+border-bottom:1px solid rgba(255,255,255,.06);
+transform:translateY(-100%);
+opacity:0;
+visibility:hidden;
+transition:transform .5s cubic-bezier(.25,.1,.25,1),opacity .4s ease,visibility .5s;
+max-height:100vh;
+overflow-y:auto;
+}
+
+.drawer.open{
+transform:translateY(0);
+opacity:1;
+visibility:visible;
+}
+
+.drawer-inner{
+max-width:420px;
+margin:0 auto;
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+
+.drawer-item{
+display:flex;
+align-items:center;
+gap:12px;
+padding:14px 16px;
+background:rgba(255,255,255,.03);
+border:1px solid rgba(255,255,255,.06);
+border-radius:14px;
+color:rgba(255,255,255,.85);
+text-decoration:none;
+font-size:1rem;
+letter-spacing:.02em;
+transition:background .3s ease,border-color .3s ease,transform .3s ease;
+}
+
+.drawer-item:hover{
+background:rgba(255,255,255,.07);
+border-color:rgba(255,255,255,.14);
+transform:translateY(-1px);
+}
+
+.drawer-item svg{width:20px;height:20px;fill:currentColor;flex-shrink:0}
+
+.drawer-item-text{flex:1}
+
+.drawer-item-sub{
+font-size:.75rem;
+color:rgba(255,255,255,.4);
+display:block;
+margin-top:2px;
+}
+
+.drawer-divider{
+height:1px;
+background:rgba(255,255,255,.06);
+margin:6px 0;
+}
 
 .card{
 position:relative;
@@ -243,6 +386,14 @@ overflow:hidden;
 text-overflow:ellipsis;
 }
 
+.activity-source{
+font-size:.65rem;
+color:rgba(255,255,255,.35);
+letter-spacing:.06em;
+text-transform:uppercase;
+margin-top:2px;
+}
+
 .progress-container{display:flex;flex-direction:column;gap:4px;margin-top:5px}
 
 .progress-bar{
@@ -345,16 +496,21 @@ animation-duration:.01ms !important;
 .avatar{width:84px;height:84px}
 .name{font-size:1.45rem}
 .music-toggle{bottom:14px;right:14px;width:40px;height:40px}
+.topbar{width:calc(100% - 24px);top:10px}
+.drawer{padding-top:74px}
 }
 `;
 
 const YT_VIDEO_ID = 'JTQzYgKOAjo';
 const YT_VOLUME = 55;
+const DISCORD_ID = '1429093326505640016';
+const LASTFM_USER = 'Nyxieepie';
+const LASTFM_KEY = '93b1e25b8d9f0ff55175904af9b336b7';
 
 const SOCIALS = {
-  discord: '1429093326505640016',
   instagram: 'https://instagram.com/Deathyyyyyyyyyy',
   server: 'https://discord.gg/Y7mKtX9Bd',
+  sds: 'https://silver-dev-studios.github.io/SDS/',
 };
 
 function useLanyard(userId) {
@@ -401,6 +557,44 @@ function useLanyard(userId) {
   }, [userId]);
 
   return data;
+}
+
+function useLastfm() {
+  const [track, setTrack] = useState(null);
+
+  useEffect(() => {
+    let alive = true;
+    const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&format=json&limit=5&user=${LASTFM_USER}&api_key=${LASTFM_KEY}`;
+
+    const fetchTrack = () => {
+      fetch(url)
+        .then((r) => r.json())
+        .then((d) => {
+          if (!alive) return;
+          const tracks = d?.recenttracks?.track;
+          if (!tracks || tracks.length === 0) return;
+          const first = Array.isArray(tracks) ? tracks[0] : tracks;
+          const nowPlaying = first['@attr']?.nowplaying === 'true';
+          setTrack({
+            name: first.name,
+            artist: first.artist?.['#text'] || first.artist,
+            image: first.image?.[2]?.['#text'] || first.image?.[3]?.['#text'],
+            nowPlaying,
+          });
+        })
+        .catch(() => {});
+    };
+
+    fetchTrack();
+    const i = setInterval(fetchTrack, 30000);
+
+    return () => {
+      alive = false;
+      clearInterval(i);
+    };
+  }, []);
+
+  return track;
 }
 
 function useYouTubeAudio(shouldPlay) {
@@ -554,12 +748,42 @@ function Avatar({ presence }) {
   );
 }
 
-function Activity({ presence }) {
-  if (!presence) return null;
+function TopbarAvatar({ presence }) {
+  const [img, setImg] = useState(null);
+  const [status, setStatus] = useState('offline');
 
-  const activities = presence.activities || [];
-  const spotify = presence.spotify;
-  const listening = presence.listening_to_spotify;
+  useEffect(() => {
+    if (!presence) return;
+    const u = presence.discord_user;
+    if (!u) return;
+    setImg(
+      u.avatar
+        ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png?size=128`
+        : `https://cdn.discordapp.com/embed/avatars/0.png`
+    );
+    setStatus(presence.discord_status);
+  }, [presence]);
+
+  const color =
+    {
+      online: '#43b581',
+      idle: '#faa61a',
+      dnd: '#f04747',
+      offline: '#747f8d',
+    }[status] || '#747f8d';
+
+  return (
+    <div className="topbar-avatar-wrap">
+      {img ? <img src={img} alt="" className="topbar-avatar" /> : <div className="topbar-avatar" />}
+      <span className="topbar-status" style={{ background: color }} />
+    </div>
+  );
+}
+
+function Activity({ presence, lastfm }) {
+  const activities = presence?.activities || [];
+  const spotify = presence?.spotify;
+  const listening = presence?.listening_to_spotify;
   const custom = activities.find((a) => a.type === 4);
   const game = activities.find((a) => a.type !== 4 && a.name !== 'Spotify');
 
@@ -570,6 +794,7 @@ function Activity({ presence }) {
         <div className="activity-text">
           <p className="activity-name">{spotify.song}</p>
           <p className="activity-sub">{spotify.artist}</p>
+          <p className="activity-source">Spotify</p>
           {spotify.timestamps && (
             <ProgressBar start={spotify.timestamps.start} end={spotify.timestamps.end} />
           )}
@@ -597,6 +822,40 @@ function Activity({ presence }) {
     );
   }
 
+  if (lastfm && lastfm.nowPlaying) {
+    return (
+      <div className="activity">
+        {lastfm.image ? (
+          <img src={lastfm.image} alt="" className="activity-icon" />
+        ) : (
+          <div className="activity-icon" />
+        )}
+        <div className="activity-text">
+          <p className="activity-name">{lastfm.name}</p>
+          <p className="activity-sub">{lastfm.artist}</p>
+          <p className="activity-source">Last.fm · Now Playing</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (lastfm && !lastfm.nowPlaying) {
+    return (
+      <div className="activity">
+        {lastfm.image ? (
+          <img src={lastfm.image} alt="" className="activity-icon" />
+        ) : (
+          <div className="activity-icon" />
+        )}
+        <div className="activity-text">
+          <p className="activity-name">{lastfm.name}</p>
+          <p className="activity-sub">{lastfm.artist}</p>
+          <p className="activity-source">Last.fm · Last Played</p>
+        </div>
+      </div>
+    );
+  }
+
   if (custom) {
     return (
       <div className="activity">
@@ -615,47 +874,20 @@ function Activity({ presence }) {
 }
 
 function Socials() {
-  const [copied, setCopied] = useState(false);
-
-  const copyDiscord = () => {
-    const id = SOCIALS.discord;
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(id).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      });
-    } else {
-      const ta = document.createElement('textarea');
-      ta.value = id;
-      document.body.appendChild(ta);
-      ta.select();
-      try {
-        document.execCommand('copy');
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      } catch {}
-      document.body.removeChild(ta);
-    }
-  };
-
   return (
     <div className="socials">
-      <button
+      <a
         className="social"
-        onClick={copyDiscord}
-        title={copied ? 'Copied!' : `Discord: ${SOCIALS.discord}`}
-        aria-label="Copy Discord ID"
+        href={`https://discord.com/users/${DISCORD_ID}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        title="Discord Profile"
+        aria-label="Discord Profile"
       >
-        {copied ? (
-          <svg viewBox="0 0 24 24">
-            <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-          </svg>
-        ) : (
-          <svg viewBox="0 0 24 24">
-            <path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
-          </svg>
-        )}
-      </button>
+        <svg viewBox="0 0 24 24">
+          <path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+        </svg>
+      </a>
 
       <a
         className="social"
@@ -669,19 +901,48 @@ function Socials() {
           <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" />
         </svg>
       </a>
+    </div>
+  );
+}
 
-      <a
-        className="social"
-        href={SOCIALS.server}
-        target="_blank"
-        rel="noopener noreferrer"
-        title="Discord Server"
-        aria-label="Discord Server"
-      >
-        <svg viewBox="0 0 24 24">
-          <path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8.009 8.009 0 0 1-8 8zm4.5-8.5a2 2 0 1 1-2-2 2 2 0 0 1 2 2zm-7 0a2 2 0 1 1-2-2 2 2 0 0 1 2 2z" />
-        </svg>
-      </a>
+function Drawer({ open, onClose }) {
+  return (
+    <div className={`drawer ${open ? 'open' : ''}`}>
+      <div className="drawer-inner">
+        <a
+          className="drawer-item"
+          href={SOCIALS.server}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={onClose}
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+          </svg>
+          <span className="drawer-item-text">
+            Discord Server
+            <span className="drawer-item-sub">Join the server</span>
+          </span>
+        </a>
+
+        <div className="drawer-divider" />
+
+        <a
+          className="drawer-item"
+          href={SOCIALS.sds}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={onClose}
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2 4 6v6c0 5 3.4 9.7 8 10 4.6-.3 8-5 8-10V6l-8-4zm0 2.2 6 3v4.8c0 4.1-2.7 7.9-6 8.2-3.3-.3-6-4.1-6-8.2V7.2l6-3z" />
+          </svg>
+          <span className="drawer-item-text">
+            Silver Dev Studios
+            <span className="drawer-item-sub">silver-dev-studios.github.io</span>
+          </span>
+        </a>
+      </div>
     </div>
   );
 }
@@ -690,7 +951,10 @@ export default function App() {
   const [entered, setEntered] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [musicOn, setMusicOn] = useState(true);
-  const presence = useLanyard('1429093326505640016');
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const presence = useLanyard(DISCORD_ID);
+  const lastfm = useLastfm();
 
   useYouTubeAudio(entered && musicOn);
 
@@ -722,28 +986,52 @@ export default function App() {
         </button>
       </div>
 
-      <div className="app">
-        <div className={`card ${mounted ? 'mounted' : ''}`}>
-          <Avatar presence={presence} />
-          <h1 className="name">Nyxieepieee</h1>
-          <p className="handle">@nyx · Meowmeow</p>
-          <p className="bio">
-            {'Web development and bot developer i am nyx. I am 15 years old\nI love life'}
-          </p>
-          <Activity presence={presence} />
-          <Socials />
-        </div>
-      </div>
-
       {entered && (
-        <button
-          className="music-toggle"
-          onClick={() => setMusicOn((v) => !v)}
-          aria-label={musicOn ? 'Mute music' : 'Unmute music'}
-        >
-          {musicOn ? '♪' : '✕'}
-        </button>
+        <>
+          <div className="topbar">
+            <TopbarAvatar presence={presence} />
+            <span className="topbar-title">Nyxieepie</span>
+            <button
+              className="topbar-menu"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-label="Toggle menu"
+            >
+              {menuOpen ? (
+                <svg viewBox="0 0 24 24">
+                  <path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.3 19.71l-1.42-1.42L9.17 12 2.88 5.71 4.3 4.29l6.29 6.3 6.3-6.3z" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24">
+                  <path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z" />
+                </svg>
+              )}
+            </button>
+          </div>
+
+          <Drawer open={menuOpen} onClose={() => setMenuOpen(false)} />
+
+          <div className="app" onClick={() => menuOpen && setMenuOpen(false)}>
+            <div className={`card ${mounted ? 'mounted' : ''}`}>
+              <Avatar presence={presence} />
+              <h1 className="name">Nyxieepieee</h1>
+              <p className="handle">@nyx · Meowmeow</p>
+              <p className="bio">
+                {'Web development and bot developer i am nyx. I am 15 years old\nI love life'}
+              </p>
+              <Activity presence={presence} lastfm={lastfm} />
+              <Socials />
+            </div>
+          </div>
+
+          <button
+            className="music-toggle"
+            onClick={() => setMusicOn((v) => !v)}
+            aria-label={musicOn ? 'Mute music' : 'Unmute music'}
+          >
+            {musicOn ? '♪' : '✕'}
+          </button>
+        </>
       )}
     </>
   );
-          }
+            }
