@@ -224,6 +224,7 @@ justify-content:center;
 overflow:hidden;
 border-radius:8px;
 margin:0 4px;
+background:rgba(14,14,18,1);
 }
 
 .topbar-gif img{
@@ -233,6 +234,7 @@ max-width:100%;
 object-fit:contain;
 display:block;
 border-radius:8px;
+mix-blend-mode:darken;
 }
 
 .topbar-menu{
@@ -1229,4 +1231,4 @@ export default function App() {
       )}
     </>
   );
-            }
+          }
