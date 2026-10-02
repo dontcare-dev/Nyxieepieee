@@ -203,7 +203,7 @@ transition:background .3s ease,color .3s ease;
 position:fixed;
 inset:0;
 z-index:39;
-background:rgba(0,0,0,.55);
+background:rgba(0,0,0,.25);
 backdrop-filter:blur(2px);
 -webkit-backdrop-filter:blur(2px);
 opacity:0;
@@ -221,10 +221,10 @@ bottom:0;
 width:280px;
 max-width:80vw;
 z-index:40;
-background:rgba(12,12,16,.94);
-backdrop-filter:blur(24px) saturate(140%);
--webkit-backdrop-filter:blur(24px) saturate(140%);
-border-right:1px solid rgba(255,255,255,.06);
+background:rgba(10,10,14,.32);
+backdrop-filter:blur(28px) saturate(160%);
+-webkit-backdrop-filter:blur(28px) saturate(160%);
+border-right:1px solid rgba(255,255,255,.05);
 padding:24px 16px;
 display:flex;
 flex-direction:column;
@@ -232,6 +232,7 @@ gap:8px;
 transform:translateX(-100%);
 transition:transform .45s cubic-bezier(.25,.1,.25,1);
 overflow-y:auto;
+box-shadow:8px 0 40px rgba(0,0,0,.35);
 }
 
 .sidebar.open{transform:translateX(0)}
@@ -248,9 +249,10 @@ width:40px;
 height:40px;
 border-radius:50%;
 object-fit:cover;
-border:1px solid rgba(255,255,255,.1);
+border:1px solid rgba(255,255,255,.15);
 background:rgba(255,255,255,.05);
 flex-shrink:0;
+box-shadow:0 0 20px rgba(0,0,0,.5);
 }
 
 .sidebar-header-text{
@@ -264,16 +266,18 @@ min-width:0;
 font-size:1.05rem;
 color:#fff;
 letter-spacing:.02em;
+text-shadow:0 1px 8px rgba(0,0,0,.7);
 }
 
 .sidebar-header-sub{
 font-size:.75rem;
-color:rgba(255,255,255,.4);
+color:rgba(255,255,255,.55);
+text-shadow:0 1px 6px rgba(0,0,0,.6);
 }
 
 .sidebar-divider{
 height:1px;
-background:rgba(255,255,255,.06);
+background:rgba(255,255,255,.08);
 margin:8px 4px;
 }
 
@@ -282,21 +286,26 @@ display:flex;
 align-items:center;
 gap:12px;
 padding:12px 14px;
-background:transparent;
-border:none;
+background:rgba(255,255,255,.02);
+border:1px solid rgba(255,255,255,.04);
 border-radius:12px;
-color:rgba(255,255,255,.8);
+color:rgba(255,255,255,.85);
 text-decoration:none;
 font-family:'Chewy',cursive;
 font-size:.95rem;
 letter-spacing:.02em;
 cursor:pointer;
-transition:background .3s ease,color .3s ease;
+transition:background .3s ease,color .3s ease,border-color .3s ease;
 width:100%;
 text-align:left;
+text-shadow:0 1px 6px rgba(0,0,0,.6);
 }
 
-.sidebar-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.sidebar-item:hover{
+background:rgba(255,255,255,.08);
+border-color:rgba(255,255,255,.12);
+color:#fff;
+}
 
 .sidebar-item svg{width:20px;height:20px;fill:currentColor;flex-shrink:0}
 
@@ -304,18 +313,9 @@ text-align:left;
 
 .sidebar-item-sub{
 font-size:.7rem;
-color:rgba(255,255,255,.4);
+color:rgba(255,255,255,.5);
 display:block;
 margin-top:2px;
-}
-
-.sidebar-footer{
-margin-top:auto;
-padding:16px 12px 4px;
-font-size:.7rem;
-color:rgba(255,255,255,.3);
-letter-spacing:.05em;
-text-align:center;
 }
 
 .card{
@@ -1155,4 +1155,4 @@ export default function App() {
       )}
     </>
   );
-    }
+      }
