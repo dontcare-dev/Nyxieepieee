@@ -209,10 +209,30 @@ border:2px solid #0e0e12;
 }
 
 .topbar-title{
-flex:1;
 font-size:1.15rem;
 color:#fff;
 letter-spacing:.02em;
+flex-shrink:0;
+}
+
+.topbar-gif{
+flex:1;
+height:32px;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+border-radius:8px;
+margin:0 4px;
+}
+
+.topbar-gif img{
+height:100%;
+width:auto;
+max-width:100%;
+object-fit:contain;
+display:block;
+border-radius:8px;
 }
 
 .topbar-menu{
@@ -227,6 +247,7 @@ align-items:center;
 justify-content:center;
 color:rgba(255,255,255,.7);
 transition:background .3s ease,color .3s ease;
+flex-shrink:0;
 }
 
 .topbar-menu:hover{background:rgba(255,255,255,.06);color:#fff}
@@ -590,6 +611,7 @@ animation-duration:.01ms !important;
 .music-toggle{bottom:14px;right:14px;width:40px;height:40px}
 .topbar{width:calc(100% - 24px);top:10px}
 .sidebar{width:260px}
+.topbar-gif{height:28px}
 }
 `;
 
@@ -598,6 +620,7 @@ const YT_VOLUME = 55;
 const DISCORD_ID = '1429093326505640016';
 const LASTFM_USER = 'Nyxieepie';
 const LASTFM_KEY = '93b1e25b8d9f0ff55175904af9b336b7';
+const TOPBAR_GIF = 'https://i.ibb.co/Y4wmz9j1/d2e3f3be4087072eb36f6678c83db41a.gif';
 
 const SOCIALS = {
   instagram: 'https://instagram.com/Deathyyyyyyyyyy',
@@ -1156,6 +1179,9 @@ export default function App() {
           <div className="topbar">
             <TopbarAvatar presence={presence} />
             <span className="topbar-title">Nyxieepie</span>
+            <div className="topbar-gif">
+              <img src={TOPBAR_GIF} alt="" aria-hidden="true" />
+            </div>
             <button
               className="topbar-menu"
               onClick={() => setMenuOpen((v) => !v)}
