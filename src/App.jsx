@@ -38,15 +38,15 @@ transform:translate(-50%,-50%);
 object-fit:cover;
 z-index:0;
 pointer-events:none;
-opacity:.75;
+opacity:1;
 }
 
 .bg-overlay{
 position:fixed;
 inset:0;
 background:
-radial-gradient(circle at 50% 50%, rgba(0,0,0,.25), rgba(0,0,0,.75) 100%),
-linear-gradient(180deg, rgba(7,7,10,.35), rgba(7,7,10,.7));
+radial-gradient(circle at 50% 50%, rgba(0,0,0,.15), rgba(0,0,0,.55) 100%),
+linear-gradient(180deg, rgba(7,7,10,.2), rgba(7,7,10,.5));
 z-index:1;
 pointer-events:none;
 }
@@ -132,7 +132,7 @@ position:relative;
 z-index:2;
 width:100%;
 max-width:380px;
-background:rgba(20,20,24,.68);
+background:rgba(20,20,24,.55);
 backdrop-filter:blur(20px) saturate(140%);
 -webkit-backdrop-filter:blur(20px) saturate(140%);
 border:1px solid rgba(255,255,255,.08);
@@ -177,21 +177,24 @@ font-size:1.6rem;
 color:#fff;
 letter-spacing:.02em;
 margin-bottom:2px;
+text-shadow:0 2px 12px rgba(0,0,0,.6);
 }
 
 .handle{
 font-size:.9rem;
-color:rgba(255,255,255,.45);
+color:rgba(255,255,255,.55);
 letter-spacing:.05em;
 margin-bottom:14px;
+text-shadow:0 1px 8px rgba(0,0,0,.6);
 }
 
 .bio{
 font-size:.95rem;
-color:rgba(255,255,255,.7);
+color:rgba(255,255,255,.8);
 line-height:1.65;
 margin-bottom:18px;
 white-space:pre-line;
+text-shadow:0 1px 8px rgba(0,0,0,.6);
 }
 
 .activity{
@@ -275,9 +278,9 @@ margin-top:14px;
 width:38px;
 height:38px;
 border-radius:50%;
-background:rgba(255,255,255,.04);
-border:1px solid rgba(255,255,255,.08);
-color:rgba(255,255,255,.7);
+background:rgba(255,255,255,.06);
+border:1px solid rgba(255,255,255,.1);
+color:rgba(255,255,255,.8);
 display:flex;
 align-items:center;
 justify-content:center;
@@ -287,8 +290,8 @@ transition:background .3s ease,color .3s ease,transform .3s ease,border-color .3
 }
 
 .social:hover{
-background:rgba(255,255,255,.1);
-border-color:rgba(255,255,255,.2);
+background:rgba(255,255,255,.14);
+border-color:rgba(255,255,255,.25);
 color:#fff;
 transform:translateY(-2px);
 }
@@ -345,7 +348,7 @@ animation-duration:.01ms !important;
 }
 `;
 
-const YT_VIDEO_ID = 'l_7bd_FQ7IQ';
+const YT_VIDEO_ID = 'JTQzYgKOAjo';
 const YT_VOLUME = 55;
 
 const SOCIALS = {
@@ -743,4 +746,4 @@ export default function App() {
       )}
     </>
   );
-      }
+          }
