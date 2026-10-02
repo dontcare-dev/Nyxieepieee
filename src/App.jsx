@@ -97,6 +97,40 @@ from{opacity:0;transform:translateY(8px)}
 to{opacity:1;transform:translateY(0)}
 }
 
+.gate-audio{
+display:flex;
+align-items:center;
+gap:10px;
+margin-bottom:22px;
+padding:9px 16px;
+background:rgba(255,255,255,.04);
+border:1px solid rgba(255,255,255,.08);
+border-radius:999px;
+font-family:'Chewy',cursive;
+font-size:.85rem;
+letter-spacing:.06em;
+color:rgba(255,255,255,.6);
+cursor:pointer;
+backdrop-filter:blur(12px);
+-webkit-backdrop-filter:blur(12px);
+opacity:0;
+animation:gateBtn 1.4s cubic-bezier(.25,.1,.25,1) 1.55s forwards;
+transition:background .3s ease,border-color .3s ease,color .3s ease;
+}
+
+.gate-audio:hover{
+background:rgba(255,255,255,.08);
+border-color:rgba(255,255,255,.16);
+color:#fff;
+}
+
+.gate-audio svg{
+width:14px;
+height:14px;
+fill:currentColor;
+flex-shrink:0;
+}
+
 .enter-btn{
 background:rgba(255,255,255,.06);
 border:1px solid rgba(255,255,255,.12);
@@ -203,9 +237,9 @@ transition:background .3s ease,color .3s ease;
 position:fixed;
 inset:0;
 z-index:39;
-background:rgba(0,0,0,.25);
-backdrop-filter:blur(2px);
--webkit-backdrop-filter:blur(2px);
+background:rgba(0,0,0,.15);
+backdrop-filter:blur(1px);
+-webkit-backdrop-filter:blur(1px);
 opacity:0;
 visibility:hidden;
 transition:opacity .4s ease,visibility .4s;
@@ -221,10 +255,10 @@ bottom:0;
 width:280px;
 max-width:80vw;
 z-index:40;
-background:rgba(10,10,14,.32);
-backdrop-filter:blur(28px) saturate(160%);
--webkit-backdrop-filter:blur(28px) saturate(160%);
-border-right:1px solid rgba(255,255,255,.05);
+background:rgba(10,10,14,.18);
+backdrop-filter:blur(32px) saturate(170%);
+-webkit-backdrop-filter:blur(32px) saturate(170%);
+border-right:1px solid rgba(255,255,255,.04);
 padding:24px 16px;
 display:flex;
 flex-direction:column;
@@ -232,7 +266,7 @@ gap:8px;
 transform:translateX(-100%);
 transition:transform .45s cubic-bezier(.25,.1,.25,1);
 overflow-y:auto;
-box-shadow:8px 0 40px rgba(0,0,0,.35);
+box-shadow:8px 0 40px rgba(0,0,0,.3);
 }
 
 .sidebar.open{transform:translateX(0)}
@@ -286,8 +320,8 @@ display:flex;
 align-items:center;
 gap:12px;
 padding:12px 14px;
-background:rgba(255,255,255,.02);
-border:1px solid rgba(255,255,255,.04);
+background:rgba(255,255,255,.015);
+border:1px solid rgba(255,255,255,.03);
 border-radius:12px;
 color:rgba(255,255,255,.85);
 text-decoration:none;
@@ -298,12 +332,12 @@ cursor:pointer;
 transition:background .3s ease,color .3s ease,border-color .3s ease;
 width:100%;
 text-align:left;
-text-shadow:0 1px 6px rgba(0,0,0,.6);
+text-shadow:0 1px 6px rgba(0,0,0,.7);
 }
 
 .sidebar-item:hover{
-background:rgba(255,255,255,.08);
-border-color:rgba(255,255,255,.12);
+background:rgba(255,255,255,.06);
+border-color:rgba(255,255,255,.1);
 color:#fff;
 }
 
@@ -546,7 +580,7 @@ transition-duration:.01ms !important;
 animation-duration:.01ms !important;
 }
 .card{opacity:1;transform:translateY(0)}
-.gate-title,.gate-sub,.enter-btn{opacity:1;filter:blur(0);animation:none}
+.gate-title,.gate-sub,.enter-btn,.gate-audio{opacity:1;filter:blur(0);animation:none}
 }
 
 @media (max-width:420px){
@@ -1098,6 +1132,20 @@ export default function App() {
       <div className={`gate ${entered ? 'hidden' : ''}`}>
         <h1 className="gate-title">Nyxieepieee</h1>
         <p className="gate-sub">Meowmeow</p>
+        <button
+          className="gate-audio"
+          onClick={() => setMusicOn((v) => !v)}
+          aria-label={musicOn ? 'Disable music' : 'Enable music'}
+        >
+          <svg viewBox="0 0 24 24">
+            {musicOn ? (
+              <path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z" />
+            ) : (
+              <path d="M12 3v10.55a4 4 0 1 0 2 3.45V7h4V3h-6zM3.27 2 2 3.27l18.73 18.73L22 20.73 3.27 2z" />
+            )}
+          </svg>
+          {musicOn ? 'Music On' : 'Music Off'}
+        </button>
         <button className="enter-btn" onClick={() => setEntered(true)}>
           Enter
         </button>
@@ -1155,4 +1203,4 @@ export default function App() {
       )}
     </>
   );
-      }
+            }
