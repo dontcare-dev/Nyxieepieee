@@ -199,75 +199,123 @@ transition:background .3s ease,color .3s ease;
 
 .topbar-menu svg{width:20px;height:20px;fill:currentColor}
 
-.drawer{
+.sidebar-backdrop{
+position:fixed;
+inset:0;
+z-index:39;
+background:rgba(0,0,0,.55);
+backdrop-filter:blur(2px);
+-webkit-backdrop-filter:blur(2px);
+opacity:0;
+visibility:hidden;
+transition:opacity .4s ease,visibility .4s;
+}
+
+.sidebar-backdrop.open{opacity:1;visibility:visible}
+
+.sidebar{
 position:fixed;
 top:0;
 left:0;
-right:0;
-z-index:29;
-padding:80px 16px 20px;
-background:rgba(10,10,14,.96);
-backdrop-filter:blur(24px);
--webkit-backdrop-filter:blur(24px);
-border-bottom:1px solid rgba(255,255,255,.06);
-transform:translateY(-100%);
-opacity:0;
-visibility:hidden;
-transition:transform .5s cubic-bezier(.25,.1,.25,1),opacity .4s ease,visibility .5s;
-max-height:100vh;
-overflow-y:auto;
-}
-
-.drawer.open{
-transform:translateY(0);
-opacity:1;
-visibility:visible;
-}
-
-.drawer-inner{
-max-width:420px;
-margin:0 auto;
+bottom:0;
+width:280px;
+max-width:80vw;
+z-index:40;
+background:rgba(12,12,16,.94);
+backdrop-filter:blur(24px) saturate(140%);
+-webkit-backdrop-filter:blur(24px) saturate(140%);
+border-right:1px solid rgba(255,255,255,.06);
+padding:24px 16px;
 display:flex;
 flex-direction:column;
 gap:8px;
+transform:translateX(-100%);
+transition:transform .45s cubic-bezier(.25,.1,.25,1);
+overflow-y:auto;
 }
 
-.drawer-item{
+.sidebar.open{transform:translateX(0)}
+
+.sidebar-header{
+padding:8px 12px 20px;
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.sidebar-header-avatar{
+width:40px;
+height:40px;
+border-radius:50%;
+object-fit:cover;
+border:1px solid rgba(255,255,255,.1);
+background:rgba(255,255,255,.05);
+flex-shrink:0;
+}
+
+.sidebar-header-text{
+display:flex;
+flex-direction:column;
+gap:2px;
+min-width:0;
+}
+
+.sidebar-header-name{
+font-size:1.05rem;
+color:#fff;
+letter-spacing:.02em;
+}
+
+.sidebar-header-sub{
+font-size:.75rem;
+color:rgba(255,255,255,.4);
+}
+
+.sidebar-divider{
+height:1px;
+background:rgba(255,255,255,.06);
+margin:8px 4px;
+}
+
+.sidebar-item{
 display:flex;
 align-items:center;
 gap:12px;
-padding:14px 16px;
-background:rgba(255,255,255,.03);
-border:1px solid rgba(255,255,255,.06);
-border-radius:14px;
-color:rgba(255,255,255,.85);
+padding:12px 14px;
+background:transparent;
+border:none;
+border-radius:12px;
+color:rgba(255,255,255,.8);
 text-decoration:none;
-font-size:1rem;
+font-family:'Chewy',cursive;
+font-size:.95rem;
 letter-spacing:.02em;
-transition:background .3s ease,border-color .3s ease,transform .3s ease;
+cursor:pointer;
+transition:background .3s ease,color .3s ease;
+width:100%;
+text-align:left;
 }
 
-.drawer-item:hover{
-background:rgba(255,255,255,.07);
-border-color:rgba(255,255,255,.14);
-transform:translateY(-1px);
-}
+.sidebar-item:hover{background:rgba(255,255,255,.06);color:#fff}
 
-.drawer-item svg{width:20px;height:20px;fill:currentColor;flex-shrink:0}
+.sidebar-item svg{width:20px;height:20px;fill:currentColor;flex-shrink:0}
 
-.drawer-item-text{flex:1}
+.sidebar-item-text{flex:1;min-width:0}
 
-.drawer-item-sub{
-font-size:.75rem;
+.sidebar-item-sub{
+font-size:.7rem;
 color:rgba(255,255,255,.4);
 display:block;
 margin-top:2px;
 }
 
-.drawer-divider{
-height:1px;
-background:rgba(255,255,255,.06);
-margin:6px 0;
+.sidebar-footer{
+margin-top:auto;
+padding:16px 12px 4px;
+font-size:.7rem;
+color:rgba(255,255,255,.3);
+letter-spacing:.05em;
+text-align:center;
 }
 
 .card{
@@ -388,10 +436,20 @@ text-overflow:ellipsis;
 
 .activity-source{
 font-size:.65rem;
-color:rgba(255,255,255,.35);
+color:rgba(255,255,255,.4);
 letter-spacing:.06em;
 text-transform:uppercase;
-margin-top:2px;
+margin-top:3px;
+display:flex;
+align-items:center;
+gap:5px;
+}
+
+.activity-source svg{
+width:11px;
+height:11px;
+fill:#d51007;
+flex-shrink:0;
 }
 
 .progress-container{display:flex;flex-direction:column;gap:4px;margin-top:5px}
@@ -497,7 +555,7 @@ animation-duration:.01ms !important;
 .name{font-size:1.45rem}
 .music-toggle{bottom:14px;right:14px;width:40px;height:40px}
 .topbar{width:calc(100% - 24px);top:10px}
-.drawer{padding-top:74px}
+.sidebar{width:260px}
 }
 `;
 
@@ -512,6 +570,12 @@ const SOCIALS = {
   server: 'https://discord.gg/Y7mKtX9Bd',
   sds: 'https://silver-dev-studios.github.io/SDS/',
 };
+
+const LastfmIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M10.68 13.02c-.6-1.37-1.2-2.78-2.62-2.78-1.66 0-2.79 1.18-2.79 2.79 0 1.61 1.13 2.79 2.79 2.79 1.42 0 2.02-1.41 2.62-2.78zm5.71-1.55c-2.15-.43-3.43-1.28-3.43-2.79 0-1.51 1.25-2.42 3.05-2.42 1.94 0 3.02.85 3.58 2.26l1.9-.55C20.68 6.13 18.72 4.9 16 4.9c-2.87 0-5.02 1.5-5.02 3.83 0 2.05 1.51 3.32 4.34 3.87 2.25.44 3.13 1.03 3.13 2.17 0 1.24-1.21 2.03-3.19 2.03-2.16 0-3.06-.85-3.63-2.32l-1.89.55c.69 2.21 2.42 3.47 5.42 3.47 3.13 0 5.29-1.42 5.29-3.78 0-2.28-1.79-3.44-4.06-3.85zM24 12c0 6.63-5.37 12-12 12S0 18.63 0 12 5.37 0 12 0s12 5.37 12 12z" />
+  </svg>
+);
 
 function useLanyard(userId) {
   const [data, setData] = useState(null);
@@ -780,6 +844,27 @@ function TopbarAvatar({ presence }) {
   );
 }
 
+function SidebarHeaderAvatar({ presence }) {
+  const [img, setImg] = useState(null);
+
+  useEffect(() => {
+    if (!presence) return;
+    const u = presence.discord_user;
+    if (!u) return;
+    setImg(
+      u.avatar
+        ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png?size=128`
+        : `https://cdn.discordapp.com/embed/avatars/0.png`
+    );
+  }, [presence]);
+
+  return img ? (
+    <img src={img} alt="" className="sidebar-header-avatar" />
+  ) : (
+    <div className="sidebar-header-avatar" />
+  );
+}
+
 function Activity({ presence, lastfm }) {
   const activities = presence?.activities || [];
   const spotify = presence?.spotify;
@@ -822,7 +907,7 @@ function Activity({ presence, lastfm }) {
     );
   }
 
-  if (lastfm && lastfm.nowPlaying) {
+  if (lastfm) {
     return (
       <div className="activity">
         {lastfm.image ? (
@@ -833,24 +918,10 @@ function Activity({ presence, lastfm }) {
         <div className="activity-text">
           <p className="activity-name">{lastfm.name}</p>
           <p className="activity-sub">{lastfm.artist}</p>
-          <p className="activity-source">Last.fm · Now Playing</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (lastfm && !lastfm.nowPlaying) {
-    return (
-      <div className="activity">
-        {lastfm.image ? (
-          <img src={lastfm.image} alt="" className="activity-icon" />
-        ) : (
-          <div className="activity-icon" />
-        )}
-        <div className="activity-text">
-          <p className="activity-name">{lastfm.name}</p>
-          <p className="activity-sub">{lastfm.artist}</p>
-          <p className="activity-source">Last.fm · Last Played</p>
+          <p className="activity-source">
+            <LastfmIcon />
+            {lastfm.nowPlaying ? 'Now Playing' : 'Last Played'}
+          </p>
         </div>
       </div>
     );
@@ -905,12 +976,42 @@ function Socials() {
   );
 }
 
-function Drawer({ open, onClose }) {
+function Sidebar({ open, onClose, presence }) {
   return (
-    <div className={`drawer ${open ? 'open' : ''}`}>
-      <div className="drawer-inner">
+    <>
+      <div
+        className={`sidebar-backdrop ${open ? 'open' : ''}`}
+        onClick={onClose}
+      />
+      <aside className={`sidebar ${open ? 'open' : ''}`}>
+        <div className="sidebar-header">
+          <SidebarHeaderAvatar presence={presence} />
+          <div className="sidebar-header-text">
+            <span className="sidebar-header-name">Nyxieepieee</span>
+            <span className="sidebar-header-sub">@nyx</span>
+          </div>
+        </div>
+
+        <div className="sidebar-divider" />
+
         <a
-          className="drawer-item"
+          className="sidebar-item"
+          href={`https://discord.com/users/${DISCORD_ID}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={onClose}
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+          </svg>
+          <span className="sidebar-item-text">
+            Discord Profile
+            <span className="sidebar-item-sub">@nyx</span>
+          </span>
+        </a>
+
+        <a
+          className="sidebar-item"
           href={SOCIALS.server}
           target="_blank"
           rel="noopener noreferrer"
@@ -919,16 +1020,32 @@ function Drawer({ open, onClose }) {
           <svg viewBox="0 0 24 24">
             <path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
           </svg>
-          <span className="drawer-item-text">
+          <span className="sidebar-item-text">
             Discord Server
-            <span className="drawer-item-sub">Join the server</span>
+            <span className="sidebar-item-sub">Join the server</span>
           </span>
         </a>
 
-        <div className="drawer-divider" />
+        <a
+          className="sidebar-item"
+          href={SOCIALS.instagram}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={onClose}
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" />
+          </svg>
+          <span className="sidebar-item-text">
+            Instagram
+            <span className="sidebar-item-sub">@Deathyyyyyyyyyy</span>
+          </span>
+        </a>
+
+        <div className="sidebar-divider" />
 
         <a
-          className="drawer-item"
+          className="sidebar-item"
           href={SOCIALS.sds}
           target="_blank"
           rel="noopener noreferrer"
@@ -937,13 +1054,13 @@ function Drawer({ open, onClose }) {
           <svg viewBox="0 0 24 24">
             <path d="M12 2 4 6v6c0 5 3.4 9.7 8 10 4.6-.3 8-5 8-10V6l-8-4zm0 2.2 6 3v4.8c0 4.1-2.7 7.9-6 8.2-3.3-.3-6-4.1-6-8.2V7.2l6-3z" />
           </svg>
-          <span className="drawer-item-text">
+          <span className="sidebar-item-text">
             Silver Dev Studios
-            <span className="drawer-item-sub">silver-dev-studios.github.io</span>
+            <span className="sidebar-item-sub">silver-dev-studios.github.io</span>
           </span>
         </a>
-      </div>
-    </div>
+      </aside>
+    </>
   );
 }
 
@@ -1008,9 +1125,13 @@ export default function App() {
             </button>
           </div>
 
-          <Drawer open={menuOpen} onClose={() => setMenuOpen(false)} />
+          <Sidebar
+            open={menuOpen}
+            onClose={() => setMenuOpen(false)}
+            presence={presence}
+          />
 
-          <div className="app" onClick={() => menuOpen && setMenuOpen(false)}>
+          <div className="app">
             <div className={`card ${mounted ? 'mounted' : ''}`}>
               <Avatar presence={presence} />
               <h1 className="name">Nyxieepieee</h1>
@@ -1034,4 +1155,4 @@ export default function App() {
       )}
     </>
   );
-            }
+}
