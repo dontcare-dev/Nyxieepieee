@@ -38,15 +38,15 @@ transform:translate(-50%,-50%);
 object-fit:cover;
 z-index:0;
 pointer-events:none;
-opacity:.85;
+opacity:.75;
 }
 
 .bg-overlay{
 position:fixed;
 inset:0;
 background:
-radial-gradient(circle at 50% 50%, rgba(0,0,0,.35), rgba(0,0,0,.85) 100%),
-linear-gradient(180deg, rgba(7,7,10,.5), rgba(7,7,10,.85));
+radial-gradient(circle at 50% 50%, rgba(0,0,0,.25), rgba(0,0,0,.75) 100%),
+linear-gradient(180deg, rgba(7,7,10,.35), rgba(7,7,10,.7));
 z-index:1;
 pointer-events:none;
 }
@@ -132,7 +132,7 @@ position:relative;
 z-index:2;
 width:100%;
 max-width:380px;
-background:rgba(20,20,24,.72);
+background:rgba(20,20,24,.68);
 backdrop-filter:blur(20px) saturate(140%);
 -webkit-backdrop-filter:blur(20px) saturate(140%);
 border:1px solid rgba(255,255,255,.08);
@@ -318,7 +318,7 @@ transition:background .3s ease,color .3s ease;
 
 .music-toggle:hover{background:rgba(255,255,255,.1);color:#fff}
 
-#ytAudio{
+.yt-hidden{
 position:fixed;
 top:-9999px;
 left:-9999px;
@@ -345,84 +345,14 @@ animation-duration:.01ms !important;
 }
 `;
 
-const YT_VIDEO_ID = 'AYLbPjtfdic';
+const YT_VIDEO_ID = 'l_7bd_FQ7IQ';
+const YT_VOLUME = 55;
 
 const SOCIALS = {
   discord: '1429093326505640016',
   instagram: 'https://instagram.com/Deathyyyyyyyyyy',
   server: 'https://discord.gg/Y7mKtX9Bd',
 };
-
-let ytPlayer = null;
-
-function loadYouTubeAPI() {
-  return new Promise((resolve) => {
-    if (window.YT && window.YT.Player) {
-      resolve();
-      return;
-    }
-    const prev = window.onYouTubeIframeAPIReady;
-    window.onYouTubeIframeAPIReady = () => {
-      if (prev) prev();
-      resolve();
-    };
-    if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
-      const tag = document.createElement('script');
-      tag.src = 'https://www.youtube.com/iframe_api';
-      document.head.appendChild(tag);
-    }
-  });
-}
-
-async function createPlayer() {
-  await loadYouTubeAPI();
-  if (ytPlayer) return ytPlayer;
-  ytPlayer = new window.YT.Player('ytAudio', {
-    height: '1',
-    width: '1',
-    videoId: YT_VIDEO_ID,
-    playerVars: {
-      autoplay: 0,
-      controls: 0,
-      disablekb: 1,
-      fs: 0,
-      modestbranding: 1,
-      rel: 0,
-      playsinline: 1,
-      iv_load_policy: 3,
-      loop: 1,
-      playlist: YT_VIDEO_ID,
-    },
-    events: {
-      onReady: (e) => {
-        e.target.setVolume(55);
-      },
-      onStateChange: (e) => {
-        if (e.data === 0) {
-          e.target.seekTo(0);
-          e.target.playVideo();
-        }
-      },
-    },
-  });
-  return ytPlayer;
-}
-
-function play() {
-  if (!ytPlayer) return;
-  try {
-    ytPlayer.unMute();
-    ytPlayer.setVolume(55);
-    ytPlayer.playVideo();
-  } catch {}
-}
-
-function pause() {
-  if (!ytPlayer) return;
-  try {
-    ytPlayer.pauseVideo();
-  } catch {}
-}
 
 function useLanyard(userId) {
   const [data, setData] = useState(null);
@@ -468,6 +398,90 @@ function useLanyard(userId) {
   }, [userId]);
 
   return data;
+}
+
+function useYouTubeAudio(shouldPlay) {
+  const playerRef = useRef(null);
+  const readyRef = useRef(false);
+  const startedRef = useRef(false);
+
+  useEffect(() => {
+    const init = () => {
+      if (!window.YT || !window.YT.Player || playerRef.current) return;
+
+      playerRef.current = new window.YT.Player('ytAudio', {
+        height: '1',
+        width: '1',
+        videoId: YT_VIDEO_ID,
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          disablekb: 1,
+          fs: 0,
+          modestbranding: 1,
+          rel: 0,
+          playsinline: 1,
+          iv_load_policy: 3,
+          loop: 1,
+          playlist: YT_VIDEO_ID,
+        },
+        events: {
+          onReady: () => {
+            readyRef.current = true;
+            if (shouldPlay && !startedRef.current) {
+              startedRef.current = true;
+              const p = playerRef.current;
+              p.mute();
+              p.playVideo();
+              setTimeout(() => {
+                try {
+                  p.unMute();
+                  p.setVolume(YT_VOLUME);
+                } catch {}
+              }, 300);
+            }
+          },
+        },
+      });
+    };
+
+    if (!window.YT) {
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      window.onYouTubeIframeAPIReady = init;
+      document.head.appendChild(tag);
+    } else {
+      init();
+    }
+  }, []);
+
+  useEffect(() => {
+    const p = playerRef.current;
+    if (!p || !readyRef.current || !p.playVideo) return;
+
+    if (shouldPlay) {
+      try {
+        if (!startedRef.current) {
+          startedRef.current = true;
+          p.mute();
+          p.playVideo();
+          setTimeout(() => {
+            try {
+              p.unMute();
+              p.setVolume(YT_VOLUME);
+            } catch {}
+          }, 300);
+        } else {
+          p.setVolume(YT_VOLUME);
+          p.playVideo();
+        }
+      } catch {}
+    } else {
+      try {
+        p.pauseVideo();
+      } catch {}
+    }
+  }, [shouldPlay]);
 }
 
 function ProgressBar({ start, end }) {
@@ -675,28 +689,13 @@ export default function App() {
   const [musicOn, setMusicOn] = useState(true);
   const presence = useLanyard('1429093326505640016');
 
-  useEffect(() => {
-    createPlayer();
-  }, []);
+  useYouTubeAudio(entered && musicOn);
 
   useEffect(() => {
-    if (!entered) return;
-    requestAnimationFrame(() => setMounted(true));
+    if (entered) {
+      requestAnimationFrame(() => setMounted(true));
+    }
   }, [entered]);
-
-  const enter = () => {
-    setEntered(true);
-    if (musicOn) play();
-  };
-
-  const toggleMusic = () => {
-    setMusicOn((v) => {
-      const next = !v;
-      if (next) play();
-      else pause();
-      return next;
-    });
-  };
 
   return (
     <>
@@ -710,12 +709,12 @@ export default function App() {
       />
       <div className="bg-overlay" />
 
-      <div id="ytAudio" />
+      <div id="ytAudio" className="yt-hidden" />
 
       <div className={`gate ${entered ? 'hidden' : ''}`}>
         <h1 className="gate-title">Nyxieepieee</h1>
         <p className="gate-sub">Meowmeow</p>
-        <button className="enter-btn" onClick={enter}>
+        <button className="enter-btn" onClick={() => setEntered(true)}>
           Enter
         </button>
       </div>
@@ -736,7 +735,7 @@ export default function App() {
       {entered && (
         <button
           className="music-toggle"
-          onClick={toggleMusic}
+          onClick={() => setMusicOn((v) => !v)}
           aria-label={musicOn ? 'Mute music' : 'Unmute music'}
         >
           {musicOn ? '♪' : '✕'}
@@ -744,4 +743,4 @@ export default function App() {
       )}
     </>
   );
-          }
+      }
