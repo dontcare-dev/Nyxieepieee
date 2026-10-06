@@ -53,20 +53,22 @@ pointer-events:none;
 
 .flash-gif{
 position:fixed;
-inset:0;
-width:100vw;
-height:100vh;
+top:50%;
+left:50%;
+min-width:100%;
+min-height:100%;
+width:auto;
+height:auto;
+transform:translate(-50%,-50%);
 object-fit:cover;
 z-index:25;
 pointer-events:none;
-animation:flashPulse 4s ease-in-out forwards;
+opacity:0;
+transition:opacity 1.2s ease;
 }
 
-@keyframes flashPulse{
-0%{opacity:0}
-15%{opacity:.18}
-85%{opacity:.18}
-100%{opacity:0}
+.flash-gif.active{
+opacity:.1;
 }
 
 .gate{
@@ -1206,7 +1208,7 @@ export default function App() {
   const [mounted, setMounted] = useState(false);
   const [musicOn, setMusicOn] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [flashKey, setFlashKey] = useState(-1);
+  const [flashOn, setFlashOn] = useState(false);
 
   const presence = useLanyard(DISCORD_ID);
   const lastfm = useLastfm();
@@ -1221,10 +1223,15 @@ export default function App() {
 
   useEffect(() => {
     if (!entered) return;
+    let timeoutId;
     const interval = setInterval(() => {
-      setFlashKey((k) => k + 1);
+      setFlashOn(true);
+      timeoutId = setTimeout(() => setFlashOn(false), 4000);
     }, 18000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeoutId);
+    };
   }, [entered]);
 
   const liveName = presence?.discord_user?.username || 'nyx';
@@ -1233,23 +1240,15 @@ export default function App() {
     <>
       <style>{styles}</style>
 
+      <img className="bg-gif" src={BG_GIF} alt="" aria-hidden="true" />
+      <div className="bg-overlay" />
+
       <img
-        className="bg-gif"
-        src={BG_GIF}
+        className={`flash-gif ${flashOn ? 'active' : ''}`}
+        src={FLASH_GIF}
         alt=""
         aria-hidden="true"
       />
-      <div className="bg-overlay" />
-
-      {entered && flashKey >= 0 && (
-        <img
-          key={flashKey}
-          className="flash-gif"
-          src={FLASH_GIF}
-          alt=""
-          aria-hidden="true"
-        />
-      )}
 
       <div id="ytAudio" className="yt-hidden" />
 
@@ -1330,4 +1329,4 @@ export default function App() {
       )}
     </>
   );
-          }
+    }
