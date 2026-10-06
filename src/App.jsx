@@ -64,11 +64,11 @@ object-fit:cover;
 z-index:25;
 pointer-events:none;
 opacity:0;
-transition:opacity 1.2s ease;
+transition:opacity .35s ease;
 }
 
 .flash-gif.active{
-opacity:.1;
+opacity:.55;
 }
 
 .gate{
@@ -1226,7 +1226,7 @@ export default function App() {
     let timeoutId;
     const interval = setInterval(() => {
       setFlashOn(true);
-      timeoutId = setTimeout(() => setFlashOn(false), 4000);
+      timeoutId = setTimeout(() => setFlashOn(false), 2000);
     }, 18000);
     return () => {
       clearInterval(interval);
@@ -1329,4 +1329,4 @@ export default function App() {
       )}
     </>
   );
-    }
+            }
