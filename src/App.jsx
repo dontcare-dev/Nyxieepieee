@@ -383,7 +383,7 @@ backdrop-filter:blur(20px) saturate(140%);
 -webkit-backdrop-filter:blur(20px) saturate(140%);
 border:1px solid rgba(255,255,255,.08);
 border-radius:24px;
-padding:28px 24px 22px;
+padding:0 24px 22px;
 display:flex;
 flex-direction:column;
 align-items:center;
@@ -392,9 +392,60 @@ box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04);
 opacity:0;
 transform:translateY(20px);
 transition:opacity 1.2s cubic-bezier(.25,.1,.25,1),transform 1.2s cubic-bezier(.25,.1,.25,1);
+overflow:hidden;
 }
 
 .card.mounted{opacity:1;transform:translateY(0)}
+
+.profile-header{
+position:relative;
+width:calc(100% + 48px);
+margin-left:-24px;
+height:120px;
+margin-bottom:56px;
+flex-shrink:0;
+}
+
+.profile-banner{
+width:100%;
+height:100%;
+background-size:cover;
+background-position:center;
+background-color:rgba(0,0,0,.2);
+background-blend-mode:overlay;
+}
+
+.profile-header .avatar-wrap{
+position:absolute;
+bottom:-48px;
+left:50%;
+transform:translateX(-50%);
+margin-bottom:0;
+width:96px;
+height:96px;
+border-radius:50%;
+border:4px solid rgba(20,20,24,.95);
+background:#141418;
+}
+
+.profile-header .avatar{
+width:100%;
+height:100%;
+border-radius:50%;
+object-fit:cover;
+display:block;
+border:none;
+}
+
+.profile-header .status-dot{
+position:absolute;
+bottom:4px;
+right:4px;
+width:18px;
+height:18px;
+border-radius:50%;
+border:3px solid #141418;
+}
 
 .avatar-wrap{position:relative;margin-bottom:14px}
 
@@ -605,8 +656,9 @@ animation-duration:.01ms !important;
 }
 
 @media (max-width:420px){
-.card{padding:24px 18px 18px;border-radius:20px}
-.avatar{width:84px;height:84px}
+.card{padding:0 18px 18px;border-radius:20px}
+.profile-header{height:104px;margin-bottom:48px}
+.profile-header .avatar-wrap{width:84px;height:84px;bottom:-42px}
 .name{font-size:1.45rem}
 .music-toggle{bottom:14px;right:14px;width:40px;height:40px}
 .topbar{width:calc(100% - 24px);top:10px}
@@ -621,6 +673,7 @@ const DISCORD_ID = '1429093326505640016';
 const LASTFM_USER = 'Nyxieepie';
 const LASTFM_KEY = '93b1e25b8d9f0ff55175904af9b336b7';
 const TOPBAR_GIF = 'https://i.ibb.co/Xx6DndSg/1edbf144909f2bbfcff412393422984c-1.gif';
+const BANNER_IMG = 'https://i.ibb.co/pvjjSdYR/4a512a8a2ff8250963067e665a0aded9.jpg';
 
 const SOCIALS = {
   instagram: 'https://instagram.com/Deathyyyyyyyyyy',
@@ -837,7 +890,7 @@ function ProgressBar({ start, end }) {
   );
 }
 
-function Avatar({ presence }) {
+function ProfileHeader({ presence }) {
   const [img, setImg] = useState(null);
   const [status, setStatus] = useState('offline');
 
@@ -862,9 +915,15 @@ function Avatar({ presence }) {
     }[status] || '#747f8d';
 
   return (
-    <div className="avatar-wrap">
-      {img ? <img src={img} alt="" className="avatar" /> : <div className="avatar" />}
-      <span className="status-dot" style={{ background: color }} />
+    <div className="profile-header">
+      <div
+        className="profile-banner"
+        style={{ backgroundImage: `url(${BANNER_IMG})` }}
+      />
+      <div className="avatar-wrap">
+        {img ? <img src={img} alt="" className="avatar" /> : <div className="avatar" />}
+        <span className="status-dot" style={{ background: color }} />
+      </div>
     </div>
   );
 }
@@ -1209,7 +1268,7 @@ export default function App() {
 
           <div className="app">
             <div className={`card ${mounted ? 'mounted' : ''}`}>
-              <Avatar presence={presence} />
+              <ProfileHeader presence={presence} />
               <h1 className="name">{liveName}</h1>
               <p className="handle">@nyx · Meowmeow</p>
               <p className="bio">
@@ -1231,4 +1290,4 @@ export default function App() {
       )}
     </>
   );
-}
+          }
