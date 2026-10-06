@@ -53,22 +53,20 @@ pointer-events:none;
 
 .flash-gif{
 position:fixed;
-top:50%;
-left:50%;
-min-width:100%;
-min-height:100%;
-width:auto;
-height:auto;
-transform:translate(-50%,-50%);
+inset:0;
+width:100vw;
+height:100vh;
 object-fit:cover;
 z-index:25;
 pointer-events:none;
-opacity:0;
-transition:opacity .8s ease;
+animation:flashPulse 4s ease-in-out forwards;
 }
 
-.flash-gif.active{
-opacity:.2;
+@keyframes flashPulse{
+0%{opacity:0}
+15%{opacity:.18}
+85%{opacity:.18}
+100%{opacity:0}
 }
 
 .gate{
@@ -1208,7 +1206,7 @@ export default function App() {
   const [mounted, setMounted] = useState(false);
   const [musicOn, setMusicOn] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [flashOn, setFlashOn] = useState(false);
+  const [flashKey, setFlashKey] = useState(-1);
 
   const presence = useLanyard(DISCORD_ID);
   const lastfm = useLastfm();
@@ -1223,15 +1221,10 @@ export default function App() {
 
   useEffect(() => {
     if (!entered) return;
-    let timeoutId;
     const interval = setInterval(() => {
-      setFlashOn(true);
-      timeoutId = setTimeout(() => setFlashOn(false), 4000);
+      setFlashKey((k) => k + 1);
     }, 18000);
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timeoutId);
-    };
+    return () => clearInterval(interval);
   }, [entered]);
 
   const liveName = presence?.discord_user?.username || 'nyx';
@@ -1248,9 +1241,10 @@ export default function App() {
       />
       <div className="bg-overlay" />
 
-      {entered && (
+      {entered && flashKey >= 0 && (
         <img
-          className={`flash-gif ${flashOn ? 'active' : ''}`}
+          key={flashKey}
+          className="flash-gif"
           src={FLASH_GIF}
           alt=""
           aria-hidden="true"
@@ -1336,4 +1330,4 @@ export default function App() {
       )}
     </>
   );
-        }
+          }
