@@ -51,6 +51,27 @@ z-index:1;
 pointer-events:none;
 }
 
+.flash-gif{
+position:fixed;
+top:50%;
+left:50%;
+min-width:100%;
+min-height:100%;
+width:auto;
+height:auto;
+transform:translate(-50%,-50%);
+object-fit:cover;
+z-index:25;
+pointer-events:none;
+opacity:0;
+mix-blend-mode:screen;
+transition:opacity .8s ease;
+}
+
+.flash-gif.active{
+opacity:.22;
+}
+
 .gate{
 position:fixed;
 inset:0;
@@ -617,7 +638,7 @@ transform:translateY(-2px);
 position:fixed;
 bottom:20px;
 right:20px;
-z-index:20;
+z-index:26;
 width:44px;
 height:44px;
 border-radius:50%;
@@ -653,6 +674,7 @@ animation-duration:.01ms !important;
 }
 .card{opacity:1;transform:translateY(0)}
 .gate-title,.gate-sub,.enter-btn,.gate-audio{opacity:1;filter:blur(0);animation:none}
+.flash-gif{display:none}
 }
 
 @media (max-width:420px){
@@ -674,6 +696,8 @@ const LASTFM_USER = 'Nyxieepie';
 const LASTFM_KEY = '93b1e25b8d9f0ff55175904af9b336b7';
 const TOPBAR_GIF = 'https://i.ibb.co/Xx6DndSg/1edbf144909f2bbfcff412393422984c-1.gif';
 const BANNER_IMG = 'https://i.ibb.co/pvjjSdYR/4a512a8a2ff8250963067e665a0aded9.jpg';
+const BG_GIF = 'https://i.ibb.co/VWgztGwR/d895c222e5fe92cb334de04e6d8f6828.gif';
+const FLASH_GIF = 'https://i.ibb.co/fV5RJRSH/328c881f1929b778adcc7d9c1c75adcd.gif';
 
 const SOCIALS = {
   instagram: 'https://instagram.com/Deathyyyyyyyyyy',
@@ -1185,6 +1209,7 @@ export default function App() {
   const [mounted, setMounted] = useState(false);
   const [musicOn, setMusicOn] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [flashOn, setFlashOn] = useState(false);
 
   const presence = useLanyard(DISCORD_ID);
   const lastfm = useLastfm();
@@ -1197,6 +1222,19 @@ export default function App() {
     }
   }, [entered]);
 
+  useEffect(() => {
+    if (!entered) return;
+    let timeoutId;
+    const interval = setInterval(() => {
+      setFlashOn(true);
+      timeoutId = setTimeout(() => setFlashOn(false), 4000);
+    }, 18000);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeoutId);
+    };
+  }, [entered]);
+
   const liveName = presence?.discord_user?.username || 'nyx';
 
   return (
@@ -1205,11 +1243,20 @@ export default function App() {
 
       <img
         className="bg-gif"
-        src="https://i.ibb.co/TBNJGXG8/ezgif-83bbce0c070fca6e.gif"
+        src={BG_GIF}
         alt=""
         aria-hidden="true"
       />
       <div className="bg-overlay" />
+
+      {entered && (
+        <img
+          className={`flash-gif ${flashOn ? 'active' : ''}`}
+          src={FLASH_GIF}
+          alt=""
+          aria-hidden="true"
+        />
+      )}
 
       <div id="ytAudio" className="yt-hidden" />
 
@@ -1290,4 +1337,4 @@ export default function App() {
       )}
     </>
   );
-          }
+    }
