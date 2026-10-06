@@ -64,12 +64,11 @@ object-fit:cover;
 z-index:25;
 pointer-events:none;
 opacity:0;
-mix-blend-mode:screen;
 transition:opacity .8s ease;
 }
 
 .flash-gif.active{
-opacity:.22;
+opacity:.2;
 }
 
 .gate{
@@ -1337,4 +1336,4 @@ export default function App() {
       )}
     </>
   );
-    }
+            }
