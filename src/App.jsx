@@ -22,7 +22,7 @@ display:flex;
 flex-direction:column;
 align-items:center;
 justify-content:center;
-gap:20px;
+gap:16px;
 padding:96px 20px 32px;
 position:relative;
 overflow:hidden;
@@ -440,181 +440,85 @@ transition:background .3s ease,color .3s ease,transform .3s ease,border-color .3
 .social:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.25);color:#fff;transform:translateY(-2px)}
 .social svg{width:18px;height:18px;fill:currentColor}
 
-.weather{
+.strip{
+position:relative;
+z-index:2;
 width:100%;
 max-width:380px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:14px;
+padding:14px 22px;
 background:rgba(20,20,24,.55);
 backdrop-filter:blur(20px) saturate(140%);
 -webkit-backdrop-filter:blur(20px) saturate(140%);
 border:1px solid rgba(255,255,255,.08);
-border-radius:24px;
-padding:22px 20px 18px;
+border-radius:999px;
 box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04);
-position:relative;
-z-index:2;
 opacity:0;
 transform:translateY(20px);
 transition:opacity 1.2s cubic-bezier(.25,.1,.25,1) .3s,transform 1.2s cubic-bezier(.25,.1,.25,1) .3s;
 }
 
-.weather.mounted{opacity:1;transform:translateY(0)}
+.strip.mounted{opacity:1;transform:translateY(0)}
 
-.weather-top{
-display:grid;
-grid-template-columns:1fr 1fr 1fr;
-gap:10px;
-padding-bottom:18px;
-border-bottom:1px solid rgba(255,255,255,.06);
-align-items:center;
-}
-
-.weather-left{display:flex;flex-direction:column;gap:2px}
-
-.weather-time{
-font-size:1.9rem;
+.strip-clock{
+font-size:1.15rem;
 color:#fff;
-letter-spacing:.02em;
-line-height:1;
-text-shadow:0 2px 10px rgba(0,0,0,.5);
-}
-
-.weather-time .ampm{
-font-size:1.1rem;
-margin-left:4px;
-color:rgba(255,255,255,.9);
-}
-
-.weather-date{
-font-size:.72rem;
-color:rgba(255,255,255,.5);
-letter-spacing:.14em;
-text-transform:uppercase;
-margin-top:6px;
-}
-
-.weather-battery{
+letter-spacing:.04em;
 display:flex;
 align-items:center;
 gap:6px;
-margin-top:8px;
-font-size:.72rem;
-color:rgba(255,255,255,.6);
-letter-spacing:.05em;
+flex-shrink:0;
+text-shadow:0 2px 10px rgba(0,0,0,.5);
 }
 
-.weather-battery.charging{color:#43b581}
+.strip-clock .ampm{
+font-size:.85rem;
+color:rgba(255,255,255,.7);
+}
 
-.battery-icon{
-width:22px;
-height:12px;
+.strip-battery{
+display:flex;
+align-items:center;
+gap:5px;
+font-size:.8rem;
+color:rgba(255,255,255,.55);
+letter-spacing:.03em;
 flex-shrink:0;
 }
 
-.weather-mid{display:flex;flex-direction:column;align-items:center;gap:8px}
+.strip-battery.charging{color:#43b581}
 
-.weather-city{
-font-size:.72rem;
-color:rgba(255,255,255,.6);
-letter-spacing:.18em;
-text-transform:uppercase;
+.strip-battery svg{width:20px;height:11px;flex-shrink:0}
+
+.strip-divider{
+width:1px;
+height:20px;
+background:rgba(255,255,255,.1);
+flex-shrink:0;
 }
 
-.weather-toggle{
+.strip-weather{
 display:flex;
-background:rgba(255,255,255,.05);
-border:1px solid rgba(255,255,255,.08);
-border-radius:999px;
-padding:3px;
-}
-
-.weather-toggle button{
-background:transparent;
-border:none;
-font-family:'Chewy',cursive;
-font-size:.78rem;
-letter-spacing:.04em;
-color:rgba(255,255,255,.55);
-width:30px;
-height:26px;
-border-radius:999px;
-cursor:pointer;
-transition:background .3s ease,color .3s ease;
-}
-
-.weather-toggle button.active{
-background:rgba(255,255,255,.15);
-color:#fff;
-}
-
-.weather-right{
-display:flex;
-flex-direction:column;
-align-items:flex-end;
-gap:2px;
-}
-
-.weather-icon{
-width:52px;
-height:52px;
-color:rgba(255,255,255,.9);
-margin-bottom:4px;
-}
-
-.weather-temp{
-font-size:2rem;
-color:#fff;
-line-height:1;
-letter-spacing:.02em;
-text-shadow:0 2px 10px rgba(0,0,0,.5);
-}
-
-.weather-cond{
-font-size:.85rem;
-color:rgba(255,255,255,.85);
-margin-top:2px;
-text-align:right;
-line-height:1.15;
-}
-
-.weather-feels{
-font-size:.75rem;
-color:rgba(255,255,255,.5);
-margin-top:4px;
-}
-
-.weather-days{
-display:grid;
-grid-template-columns:repeat(7,1fr);
-gap:4px;
-padding-top:16px;
-}
-
-.weather-day{
-display:flex;
-flex-direction:column;
 align-items:center;
-gap:6px;
-padding:4px 2px;
+gap:8px;
+flex-shrink:0;
 }
 
-.weather-day-name{
-font-size:.65rem;
-color:rgba(255,255,255,.5);
-letter-spacing:.1em;
-text-transform:uppercase;
+.strip-weather svg{
+width:26px;
+height:26px;
+color:rgba(255,255,255,.85);
+flex-shrink:0;
 }
 
-.weather-day-icon{width:28px;height:28px;color:rgba(255,255,255,.85)}
-
-.weather-day-hi{
-font-size:.85rem;
+.strip-temp{
+font-size:1.15rem;
 color:#fff;
-letter-spacing:.02em;
-}
-
-.weather-day-lo{
-font-size:.7rem;
-color:rgba(255,255,255,.4);
+letter-spacing:.04em;
+text-shadow:0 2px 10px rgba(0,0,0,.5);
 }
 
 .music-toggle{
@@ -656,7 +560,7 @@ transition-duration:.01ms !important;
 animation-duration:.01ms !important;
 }
 .card{opacity:1;transform:translateY(0)}
-.weather{opacity:1;transform:translateY(0)}
+.strip{opacity:1;transform:translateY(0)}
 .gate-title,.gate-sub,.enter-btn,.gate-audio{opacity:1;filter:blur(0);animation:none}
 .flash-gif{display:none}
 }
@@ -670,15 +574,13 @@ animation-duration:.01ms !important;
 .topbar{width:calc(100% - 24px);top:10px}
 .sidebar{width:260px}
 .topbar-gif{height:28px}
-.weather{padding:18px 14px 14px;border-radius:20px}
-.weather-time{font-size:1.6rem}
-.weather-time .ampm{font-size:.95rem}
-.weather-temp{font-size:1.7rem}
-.weather-icon{width:44px;height:44px}
-.weather-cond{font-size:.78rem}
-.weather-day-icon{width:24px;height:24px}
-.weather-day-hi{font-size:.78rem}
-.weather-day-lo{font-size:.65rem}
+.strip{padding:12px 16px;gap:10px}
+.strip-clock{font-size:1rem}
+.strip-clock .ampm{font-size:.75rem}
+.strip-temp{font-size:1rem}
+.strip-weather svg{width:22px;height:22px}
+.strip-battery{font-size:.72rem}
+.strip-battery svg{width:18px;height:10px}
 }
 `;
 
@@ -693,7 +595,6 @@ const BG_GIF = 'https://i.ibb.co/VWgztGwR/d895c222e5fe92cb334de04e6d8f6828.gif';
 const FLASH_GIF = 'https://i.ibb.co/fV5RJRSH/328c881f1929b778adcc7d9c1c75adcd.gif';
 const WEATHER_LAT = 28.6139;
 const WEATHER_LON = 77.2090;
-const WEATHER_CITY = 'Delhi';
 
 const SOCIALS = {
   instagram: 'https://instagram.com/Deathyyyyyyyyyy',
@@ -793,24 +694,6 @@ function WeatherIcon({ code, isDay }) {
   return <CloudIcon />;
 }
 
-function weatherLabel(code) {
-  if (code === 0) return 'Clear';
-  if (code === 1) return 'Mainly clear';
-  if (code === 2) return 'Partly cloudy';
-  if (code === 3) return 'Overcast';
-  if (code === 45 || code === 48) return 'Foggy';
-  if (code >= 51 && code <= 55) return 'Drizzle';
-  if (code >= 56 && code <= 57) return 'Freezing drizzle';
-  if (code >= 61 && code <= 65) return 'Rain';
-  if (code >= 66 && code <= 67) return 'Freezing rain';
-  if (code >= 71 && code <= 75) return 'Snow';
-  if (code === 77) return 'Snow grains';
-  if (code >= 80 && code <= 82) return 'Rain showers';
-  if (code >= 85 && code <= 86) return 'Snow showers';
-  if (code >= 95) return 'Thunderstorm';
-  return 'Clear';
-}
-
 function useBattery() {
   const [battery, setBattery] = useState(null);
   useEffect(() => {
@@ -838,7 +721,7 @@ function useWeather() {
 
   useEffect(() => {
     let alive = true;
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${WEATHER_LAT}&longitude=${WEATHER_LON}&current=temperature_2m,apparent_temperature,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Asia%2FKolkata&forecast_days=7`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${WEATHER_LAT}&longitude=${WEATHER_LON}&current=temperature_2m,weather_code,is_day&timezone=Asia%2FKolkata`;
 
     const fetchWeather = () => {
       fetch(url)
@@ -1278,111 +1161,47 @@ function Socials() {
   );
 }
 
-function BatteryIndicator({ battery }) {
-  if (!battery) return null;
-  const fillW = Math.max(1, (battery.level / 100) * 14);
-  return (
-    <div className={`weather-battery ${battery.charging ? 'charging' : ''}`}>
-      <svg className="battery-icon" viewBox="0 0 24 12" aria-hidden="true">
-        <rect x="0.8" y="1.8" width="19.4" height="8.4" rx="2" fill="none" stroke="currentColor" strokeWidth="1.2" />
-        <rect x="2.3" y="3.3" width={fillW} height="5.4" rx="0.8" fill="currentColor" />
-        <rect x="21.2" y="4.2" width="1.6" height="3.6" rx="0.6" fill="currentColor" />
-      </svg>
-      <span>{battery.level}%{battery.charging ? ' ⚡' : ''}</span>
-    </div>
-  );
-}
-
-function WeatherPanel({ mounted }) {
-  const weather = useWeather();
+function BottomStrip({ mounted }) {
   const now = useClock();
+  const weather = useWeather();
   const battery = useBattery();
-  const [unit, setUnit] = useState('C');
 
   const hours12 = now.getHours() % 12 || 12;
   const minutes = now.getMinutes().toString().padStart(2, '0');
   const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
 
-  const dateStr = now
-    .toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
-    .toUpperCase();
-
   const cur = weather?.current;
-  const daily = weather?.daily;
-
-  const toUnit = (c) => {
-    if (c === null || c === undefined) return '--';
-    return Math.round(unit === 'C' ? c : (c * 9) / 5 + 32);
-  };
-
-  const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  const temp = cur ? Math.round(cur.temperature_2m) : null;
+  const fillW = battery ? Math.max(1, (battery.level / 100) * 13) : 0;
 
   return (
-    <div className={`weather ${mounted ? 'mounted' : ''}`}>
-      <div className="weather-top">
-        <div className="weather-left">
-          <div className="weather-time">
-            {hours12}:{minutes}
-            <span className="ampm">{ampm}</span>
-          </div>
-          <div className="weather-date">{dateStr}</div>
-          <BatteryIndicator battery={battery} />
-        </div>
-
-        <div className="weather-mid">
-          <div className="weather-city">{WEATHER_CITY}</div>
-          <div className="weather-toggle">
-            <button
-              className={unit === 'C' ? 'active' : ''}
-              onClick={() => setUnit('C')}
-            >
-              C
-            </button>
-            <button
-              className={unit === 'F' ? 'active' : ''}
-              onClick={() => setUnit('F')}
-            >
-              F
-            </button>
-          </div>
-        </div>
-
-        <div className="weather-right">
-          {cur && (
-            <>
-              <svg className="weather-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <WeatherIcon code={cur.weather_code} isDay={cur.is_day === 1} />
-              </svg>
-              <div className="weather-temp">{toUnit(cur.temperature_2m)}°</div>
-              <div className="weather-cond">{weatherLabel(cur.weather_code)}</div>
-              <div className="weather-feels">
-                feels like {toUnit(cur.apparent_temperature)}°
-              </div>
-            </>
-          )}
-        </div>
+    <div className={`strip ${mounted ? 'mounted' : ''}`}>
+      <div className="strip-clock">
+        {hours12}:{minutes}
+        <span className="ampm">{ampm}</span>
       </div>
 
-      {daily && daily.time && (
-        <div className="weather-days">
-          {daily.time.map((t, i) => {
-            const d = new Date(t + 'T00:00:00');
-            const label = i === 0 ? 'TODAY' : dayNames[d.getDay()];
-            return (
-              <div className="weather-day" key={t}>
-                <div className="weather-day-name">{label}</div>
-                <svg className="weather-day-icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <WeatherIcon code={daily.weather_code[i]} isDay={true} />
-                </svg>
-                <div className="weather-day-hi">
-                  {toUnit(daily.temperature_2m_max[i])}°
-                </div>
-                <div className="weather-day-lo">
-                  {toUnit(daily.temperature_2m_min[i])}°
-                </div>
-              </div>
-            );
-          })}
+      {battery && (
+        <div className={`strip-battery ${battery.charging ? 'charging' : ''}`}>
+          <svg viewBox="0 0 22 11" aria-hidden="true">
+            <rect x="0.6" y="1.6" width="18.8" height="7.8" rx="2" fill="none" stroke="currentColor" strokeWidth="1.1" />
+            <rect x="2" y="3" width={fillW} height="5" rx="0.7" fill="currentColor" />
+            <rect x="20.2" y="4" width="1.5" height="3" rx="0.5" fill="currentColor" />
+          </svg>
+          <span>
+            {battery.level}%{battery.charging ? ' ⚡' : ''}
+          </span>
+        </div>
+      )}
+
+      <div className="strip-divider" />
+
+      {cur && (
+        <div className="strip-weather">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <WeatherIcon code={cur.weather_code} isDay={cur.is_day === 1} />
+          </svg>
+          <span className="strip-temp">{temp}°</span>
         </div>
       )}
     </div>
@@ -1591,7 +1410,7 @@ export default function App() {
               <Socials />
             </div>
 
-            <WeatherPanel mounted={mounted} />
+            <BottomStrip mounted={mounted} />
           </div>
 
           <button
@@ -1605,4 +1424,4 @@ export default function App() {
       )}
     </>
   );
-              }
+      }
