@@ -19,8 +19,10 @@ overflow-x:hidden;
 .app{
 min-height:100vh;
 display:flex;
+flex-direction:column;
 align-items:center;
 justify-content:center;
+gap:20px;
 padding:96px 20px 32px;
 position:relative;
 overflow:hidden;
@@ -67,9 +69,7 @@ opacity:0;
 transition:opacity .35s ease;
 }
 
-.flash-gif.active{
-opacity:.55;
-}
+.flash-gif.active{opacity:.55}
 
 .gate{
 position:fixed;
@@ -83,11 +83,7 @@ background:#07070a;
 transition:opacity .8s cubic-bezier(.25,.1,.25,1),visibility .8s;
 }
 
-.gate.hidden{
-opacity:0;
-visibility:hidden;
-pointer-events:none;
-}
+.gate.hidden{opacity:0;visibility:hidden;pointer-events:none}
 
 .gate-title{
 font-size:clamp(2.4rem,9vw,4rem);
@@ -99,9 +95,7 @@ filter:blur(14px);
 animation:gateTitle 1.6s cubic-bezier(.25,.1,.25,1) .3s forwards;
 }
 
-@keyframes gateTitle{
-to{opacity:1;filter:blur(0)}
-}
+@keyframes gateTitle{to{opacity:1;filter:blur(0)}}
 
 .gate-sub{
 font-size:1rem;
@@ -112,10 +106,7 @@ opacity:0;
 animation:gateSub 1.4s cubic-bezier(.25,.1,.25,1) 1.2s forwards;
 }
 
-@keyframes gateSub{
-from{opacity:0;transform:translateY(8px)}
-to{opacity:1;transform:translateY(0)}
-}
+@keyframes gateSub{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 .gate-audio{
 display:flex;
@@ -138,18 +129,8 @@ animation:gateBtn 1.4s cubic-bezier(.25,.1,.25,1) 1.55s forwards;
 transition:background .3s ease,border-color .3s ease,color .3s ease;
 }
 
-.gate-audio:hover{
-background:rgba(255,255,255,.08);
-border-color:rgba(255,255,255,.16);
-color:#fff;
-}
-
-.gate-audio svg{
-width:14px;
-height:14px;
-fill:currentColor;
-flex-shrink:0;
-}
+.gate-audio:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#fff}
+.gate-audio svg{width:14px;height:14px;fill:currentColor;flex-shrink:0}
 
 .enter-btn{
 background:rgba(255,255,255,.06);
@@ -168,17 +149,9 @@ animation:gateBtn 1.4s cubic-bezier(.25,.1,.25,1) 1.8s forwards;
 transition:background .3s ease,border-color .3s ease,transform .3s ease;
 }
 
-@keyframes gateBtn{
-from{opacity:0;transform:translateY(10px)}
-to{opacity:1;transform:translateY(0)}
-}
+@keyframes gateBtn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-.enter-btn:hover{
-background:rgba(255,255,255,.12);
-border-color:rgba(255,255,255,.25);
-transform:translateY(-2px);
-}
-
+.enter-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);transform:translateY(-2px)}
 .enter-btn:active{transform:translateY(0)}
 
 .topbar{
@@ -201,12 +174,7 @@ backdrop-filter:blur(20px) saturate(140%);
 box-shadow:0 8px 32px rgba(0,0,0,.5);
 }
 
-.topbar-avatar-wrap{
-position:relative;
-flex-shrink:0;
-width:36px;
-height:36px;
-}
+.topbar-avatar-wrap{position:relative;flex-shrink:0;width:36px;height:36px}
 
 .topbar-avatar{
 width:36px;
@@ -218,22 +186,9 @@ border:1px solid rgba(255,255,255,.1);
 background:rgba(255,255,255,.05);
 }
 
-.topbar-status{
-position:absolute;
-bottom:0;
-right:0;
-width:11px;
-height:11px;
-border-radius:50%;
-border:2px solid #0e0e12;
-}
+.topbar-status{position:absolute;bottom:0;right:0;width:11px;height:11px;border-radius:50%;border:2px solid #0e0e12}
 
-.topbar-title{
-font-size:1.15rem;
-color:#fff;
-letter-spacing:.02em;
-flex-shrink:0;
-}
+.topbar-title{font-size:1.15rem;color:#fff;letter-spacing:.02em;flex-shrink:0}
 
 .topbar-gif{
 flex:1;
@@ -246,14 +201,7 @@ border-radius:8px;
 margin:0 4px;
 }
 
-.topbar-gif img{
-height:100%;
-width:auto;
-max-width:100%;
-object-fit:contain;
-display:block;
-border-radius:8px;
-}
+.topbar-gif img{height:100%;width:auto;max-width:100%;object-fit:contain;display:block;border-radius:8px}
 
 .topbar-menu{
 width:36px;
@@ -271,7 +219,6 @@ flex-shrink:0;
 }
 
 .topbar-menu:hover{background:rgba(255,255,255,.06);color:#fff}
-
 .topbar-menu svg{width:20px;height:20px;fill:currentColor}
 
 .sidebar-backdrop{
@@ -312,12 +259,7 @@ box-shadow:8px 0 40px rgba(0,0,0,.3);
 
 .sidebar.open{transform:translateX(0)}
 
-.sidebar-header{
-padding:8px 12px 20px;
-display:flex;
-align-items:center;
-gap:10px;
-}
+.sidebar-header{padding:8px 12px 20px;display:flex;align-items:center;gap:10px}
 
 .sidebar-header-avatar{
 width:40px;
@@ -330,31 +272,12 @@ flex-shrink:0;
 box-shadow:0 0 20px rgba(0,0,0,.5);
 }
 
-.sidebar-header-text{
-display:flex;
-flex-direction:column;
-gap:2px;
-min-width:0;
-}
+.sidebar-header-text{display:flex;flex-direction:column;gap:2px;min-width:0}
 
-.sidebar-header-name{
-font-size:1.05rem;
-color:#fff;
-letter-spacing:.02em;
-text-shadow:0 1px 8px rgba(0,0,0,.7);
-}
+.sidebar-header-name{font-size:1.05rem;color:#fff;letter-spacing:.02em;text-shadow:0 1px 8px rgba(0,0,0,.7)}
+.sidebar-header-sub{font-size:.75rem;color:rgba(255,255,255,.55);text-shadow:0 1px 6px rgba(0,0,0,.6)}
 
-.sidebar-header-sub{
-font-size:.75rem;
-color:rgba(255,255,255,.55);
-text-shadow:0 1px 6px rgba(0,0,0,.6);
-}
-
-.sidebar-divider{
-height:1px;
-background:rgba(255,255,255,.08);
-margin:8px 4px;
-}
+.sidebar-divider{height:1px;background:rgba(255,255,255,.08);margin:8px 4px}
 
 .sidebar-item{
 display:flex;
@@ -376,22 +299,10 @@ text-align:left;
 text-shadow:0 1px 6px rgba(0,0,0,.7);
 }
 
-.sidebar-item:hover{
-background:rgba(255,255,255,.06);
-border-color:rgba(255,255,255,.1);
-color:#fff;
-}
-
+.sidebar-item:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);color:#fff}
 .sidebar-item svg{width:20px;height:20px;fill:currentColor;flex-shrink:0}
-
 .sidebar-item-text{flex:1;min-width:0}
-
-.sidebar-item-sub{
-font-size:.7rem;
-color:rgba(255,255,255,.5);
-display:block;
-margin-top:2px;
-}
+.sidebar-item-sub{font-size:.7rem;color:rgba(255,255,255,.5);display:block;margin-top:2px}
 
 .card{
 position:relative;
@@ -448,24 +359,8 @@ border:4px solid rgba(20,20,24,.95);
 background:#141418;
 }
 
-.profile-header .avatar{
-width:100%;
-height:100%;
-border-radius:50%;
-object-fit:cover;
-display:block;
-border:none;
-}
-
-.profile-header .status-dot{
-position:absolute;
-bottom:4px;
-right:4px;
-width:18px;
-height:18px;
-border-radius:50%;
-border:3px solid #141418;
-}
+.profile-header .avatar{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;border:none}
+.profile-header .status-dot{position:absolute;bottom:4px;right:4px;width:18px;height:18px;border-radius:50%;border:3px solid #141418}
 
 .avatar-wrap{position:relative;margin-bottom:14px}
 
@@ -479,40 +374,11 @@ border:2px solid rgba(255,255,255,.1);
 background:rgba(255,255,255,.05);
 }
 
-.status-dot{
-position:absolute;
-bottom:6px;
-right:6px;
-width:18px;
-height:18px;
-border-radius:50%;
-border:3px solid #141418;
-}
+.status-dot{position:absolute;bottom:6px;right:6px;width:18px;height:18px;border-radius:50%;border:3px solid #141418}
 
-.name{
-font-size:1.6rem;
-color:#fff;
-letter-spacing:.02em;
-margin-bottom:2px;
-text-shadow:0 2px 12px rgba(0,0,0,.6);
-}
-
-.handle{
-font-size:.9rem;
-color:rgba(255,255,255,.55);
-letter-spacing:.05em;
-margin-bottom:14px;
-text-shadow:0 1px 8px rgba(0,0,0,.6);
-}
-
-.bio{
-font-size:.95rem;
-color:rgba(255,255,255,.8);
-line-height:1.65;
-margin-bottom:18px;
-white-space:pre-line;
-text-shadow:0 1px 8px rgba(0,0,0,.6);
-}
+.name{font-size:1.6rem;color:#fff;letter-spacing:.02em;margin-bottom:2px;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+.handle{font-size:.9rem;color:rgba(255,255,255,.55);letter-spacing:.05em;margin-bottom:14px;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+.bio{font-size:.95rem;color:rgba(255,255,255,.8);line-height:1.65;margin-bottom:18px;white-space:pre-line;text-shadow:0 1px 8px rgba(0,0,0,.6)}
 
 .activity{
 width:100%;
@@ -528,37 +394,12 @@ text-align:left;
 animation:slideUp .6s cubic-bezier(.25,.1,.25,1);
 }
 
-@keyframes slideUp{
-from{opacity:0;transform:translateY(8px)}
-to{opacity:1;transform:translateY(0)}
-}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-.activity-icon{
-width:40px;
-height:40px;
-border-radius:10px;
-object-fit:cover;
-flex-shrink:0;
-background:rgba(255,255,255,.05);
-}
-
+.activity-icon{width:40px;height:40px;border-radius:10px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,.05)}
 .activity-text{flex:1;min-width:0}
-
-.activity-name{
-font-size:.85rem;
-color:#fff;
-white-space:nowrap;
-overflow:hidden;
-text-overflow:ellipsis;
-}
-
-.activity-sub{
-font-size:.75rem;
-color:rgba(255,255,255,.5);
-white-space:nowrap;
-overflow:hidden;
-text-overflow:ellipsis;
-}
+.activity-name{font-size:.85rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.activity-sub{font-size:.75rem;color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 .activity-source{
 font-size:.65rem;
@@ -571,43 +412,15 @@ align-items:center;
 gap:5px;
 }
 
-.activity-source svg{
-width:11px;
-height:11px;
-fill:#d51007;
-flex-shrink:0;
-}
+.activity-source svg{width:11px;height:11px;fill:#d51007;flex-shrink:0}
 
 .progress-container{display:flex;flex-direction:column;gap:4px;margin-top:5px}
 
-.progress-bar{
-width:100%;
-height:3px;
-background:rgba(255,255,255,.1);
-border-radius:2px;
-overflow:hidden;
-}
+.progress-bar{width:100%;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:rgba(255,255,255,.6);transition:width 1s linear}
+.progress-time{display:flex;justify-content:space-between;font-size:.65rem;color:rgba(255,255,255,.35)}
 
-.progress-fill{
-height:100%;
-background:rgba(255,255,255,.6);
-transition:width 1s linear;
-}
-
-.progress-time{
-display:flex;
-justify-content:space-between;
-font-size:.65rem;
-color:rgba(255,255,255,.35);
-}
-
-.socials{
-display:flex;
-align-items:center;
-justify-content:center;
-gap:14px;
-margin-top:14px;
-}
+.socials{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px}
 
 .social{
 width:38px;
@@ -624,14 +437,167 @@ text-decoration:none;
 transition:background .3s ease,color .3s ease,transform .3s ease,border-color .3s ease;
 }
 
-.social:hover{
-background:rgba(255,255,255,.14);
-border-color:rgba(255,255,255,.25);
-color:#fff;
-transform:translateY(-2px);
+.social:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.25);color:#fff;transform:translateY(-2px)}
+.social svg{width:18px;height:18px;fill:currentColor}
+
+.weather{
+width:100%;
+max-width:380px;
+background:rgba(20,20,24,.55);
+backdrop-filter:blur(20px) saturate(140%);
+-webkit-backdrop-filter:blur(20px) saturate(140%);
+border:1px solid rgba(255,255,255,.08);
+border-radius:24px;
+padding:22px 20px 18px;
+box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04);
+position:relative;
+z-index:2;
+opacity:0;
+transform:translateY(20px);
+transition:opacity 1.2s cubic-bezier(.25,.1,.25,1) .3s,transform 1.2s cubic-bezier(.25,.1,.25,1) .3s;
 }
 
-.social svg{width:18px;height:18px;fill:currentColor}
+.weather.mounted{opacity:1;transform:translateY(0)}
+
+.weather-top{
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+gap:10px;
+padding-bottom:18px;
+border-bottom:1px solid rgba(255,255,255,.06);
+align-items:center;
+}
+
+.weather-left{display:flex;flex-direction:column;gap:2px}
+
+.weather-time{
+font-size:1.9rem;
+color:#fff;
+letter-spacing:.02em;
+line-height:1;
+text-shadow:0 2px 10px rgba(0,0,0,.5);
+}
+
+.weather-time .ampm{
+font-size:1.1rem;
+margin-left:4px;
+color:rgba(255,255,255,.9);
+}
+
+.weather-date{
+font-size:.72rem;
+color:rgba(255,255,255,.5);
+letter-spacing:.14em;
+text-transform:uppercase;
+margin-top:6px;
+}
+
+.weather-mid{display:flex;flex-direction:column;align-items:center;gap:8px}
+
+.weather-city{
+font-size:.72rem;
+color:rgba(255,255,255,.6);
+letter-spacing:.18em;
+text-transform:uppercase;
+}
+
+.weather-toggle{
+display:flex;
+background:rgba(255,255,255,.05);
+border:1px solid rgba(255,255,255,.08);
+border-radius:999px;
+padding:3px;
+}
+
+.weather-toggle button{
+background:transparent;
+border:none;
+font-family:'Chewy',cursive;
+font-size:.78rem;
+letter-spacing:.04em;
+color:rgba(255,255,255,.55);
+width:30px;
+height:26px;
+border-radius:999px;
+cursor:pointer;
+transition:background .3s ease,color .3s ease;
+}
+
+.weather-toggle button.active{
+background:rgba(255,255,255,.15);
+color:#fff;
+}
+
+.weather-right{
+display:flex;
+flex-direction:column;
+align-items:flex-end;
+gap:2px;
+}
+
+.weather-icon{
+width:52px;
+height:52px;
+fill:rgba(255,255,255,.85);
+margin-bottom:4px;
+}
+
+.weather-temp{
+font-size:2rem;
+color:#fff;
+line-height:1;
+letter-spacing:.02em;
+text-shadow:0 2px 10px rgba(0,0,0,.5);
+}
+
+.weather-cond{
+font-size:.85rem;
+color:rgba(255,255,255,.85);
+margin-top:2px;
+text-align:right;
+line-height:1.15;
+}
+
+.weather-feels{
+font-size:.75rem;
+color:rgba(255,255,255,.5);
+margin-top:4px;
+}
+
+.weather-days{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:4px;
+padding-top:16px;
+}
+
+.weather-day{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:6px;
+padding:4px 2px;
+}
+
+.weather-day-name{
+font-size:.65rem;
+color:rgba(255,255,255,.5);
+letter-spacing:.1em;
+text-transform:uppercase;
+}
+
+.weather-day-icon{width:28px;height:28px;fill:rgba(255,255,255,.8)}
+
+.weather-day-hi{
+font-size:.85rem;
+color:#fff;
+letter-spacing:.02em;
+}
+
+.weather-day-lo{
+font-size:.7rem;
+color:rgba(255,255,255,.4);
+}
 
 .music-toggle{
 position:fixed;
@@ -672,6 +638,7 @@ transition-duration:.01ms !important;
 animation-duration:.01ms !important;
 }
 .card{opacity:1;transform:translateY(0)}
+.weather{opacity:1;transform:translateY(0)}
 .gate-title,.gate-sub,.enter-btn,.gate-audio{opacity:1;filter:blur(0);animation:none}
 .flash-gif{display:none}
 }
@@ -685,6 +652,15 @@ animation-duration:.01ms !important;
 .topbar{width:calc(100% - 24px);top:10px}
 .sidebar{width:260px}
 .topbar-gif{height:28px}
+.weather{padding:18px 14px 14px;border-radius:20px}
+.weather-time{font-size:1.6rem}
+.weather-time .ampm{font-size:.95rem}
+.weather-temp{font-size:1.7rem}
+.weather-icon{width:44px;height:44px}
+.weather-cond{font-size:.78rem}
+.weather-day-icon{width:24px;height:24px}
+.weather-day-hi{font-size:.78rem}
+.weather-day-lo{font-size:.65rem}
 }
 `;
 
@@ -697,6 +673,9 @@ const TOPBAR_GIF = 'https://i.ibb.co/Xx6DndSg/1edbf144909f2bbfcff412393422984c-1
 const BANNER_IMG = 'https://i.ibb.co/pvjjSdYR/4a512a8a2ff8250963067e665a0aded9.jpg';
 const BG_GIF = 'https://i.ibb.co/VWgztGwR/d895c222e5fe92cb334de04e6d8f6828.gif';
 const FLASH_GIF = 'https://i.ibb.co/fV5RJRSH/328c881f1929b778adcc7d9c1c75adcd.gif';
+const WEATHER_LAT = 28.6139;
+const WEATHER_LON = 77.2090;
+const WEATHER_CITY = 'Delhi';
 
 const SOCIALS = {
   instagram: 'https://instagram.com/Deathyyyyyyyyyy',
@@ -709,6 +688,123 @@ const LastfmIcon = () => (
     <path d="M10.68 13.02c-.6-1.37-1.2-2.78-2.62-2.78-1.66 0-2.79 1.18-2.79 2.79 0 1.61 1.13 2.79 2.79 2.79 1.42 0 2.02-1.41 2.62-2.78zm5.71-1.55c-2.15-.43-3.43-1.28-3.43-2.79 0-1.51 1.25-2.42 3.05-2.42 1.94 0 3.02.85 3.58 2.26l1.9-.55C20.68 6.13 18.72 4.9 16 4.9c-2.87 0-5.02 1.5-5.02 3.83 0 2.05 1.51 3.32 4.34 3.87 2.25.44 3.13 1.03 3.13 2.17 0 1.24-1.21 2.03-3.19 2.03-2.16 0-3.06-.85-3.63-2.32l-1.89.55c.69 2.21 2.42 3.47 5.42 3.47 3.13 0 5.29-1.42 5.29-3.78 0-2.28-1.79-3.44-4.06-3.85zM24 12c0 6.63-5.37 12-12 12S0 18.63 0 12 5.37 0 12 0s12 5.37 12 12z" />
   </svg>
 );
+
+function weatherIcon(code, isDay) {
+  if (code === 0) {
+    return isDay ? (
+      <path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-5v3m0 14v3M2 12h3m14 0h3M4.2 4.2l2.1 2.1m11.4 11.4 2.1 2.1M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+    ) : (
+      <path d="M20.7 14.4A8.5 8.5 0 0 1 9.6 3.3a8.5 8.5 0 1 0 11.1 11.1z" />
+    );
+  }
+  if (code === 1 || code === 2) {
+    return (
+      <g>
+        <circle cx="8" cy="9" r="3.5" fill="currentColor" opacity=".9" />
+        <path d="M20.7 14.4A8.5 8.5 0 0 1 9.6 3.3a8.5 8.5 0 1 0 11.1 11.1z" opacity=".4" />
+      </g>
+    );
+  }
+  if (code === 3) {
+    return <path d="M6.5 18a4 4 0 0 1 0-8 5.5 5.5 0 0 1 10.6-1.4A4.5 4.5 0 0 1 17.5 18h-11z" />;
+  }
+  if (code === 45 || code === 48) {
+    return (
+      <g stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none">
+        <path d="M4 10h16M4 14h16M6 18h12" />
+      </g>
+    );
+  }
+  if ((code >= 51 && code <= 55) || (code >= 61 && code <= 65) || (code >= 80 && code <= 82)) {
+    return (
+      <g>
+        <path d="M6.5 15a4 4 0 0 1 0-8 5.5 5.5 0 0 1 10.6-1.4A4.5 4.5 0 0 1 17.5 15h-11z" />
+        <g stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none">
+          <path d="M8 18v2M12 18v3M16 18v2" />
+        </g>
+      </g>
+    );
+  }
+  if (code >= 71 && code <= 75) {
+    return (
+      <g>
+        <path d="M6.5 15a4 4 0 0 1 0-8 5.5 5.5 0 0 1 10.6-1.4A4.5 4.5 0 0 1 17.5 15h-11z" />
+        <g fill="currentColor">
+          <circle cx="8" cy="19" r="1" />
+          <circle cx="12" cy="20" r="1" />
+          <circle cx="16" cy="19" r="1" />
+        </g>
+      </g>
+    );
+  }
+  if (code >= 95) {
+    return (
+      <g>
+        <path d="M6.5 15a4 4 0 0 1 0-8 5.5 5.5 0 0 1 10.6-1.4A4.5 4.5 0 0 1 17.5 15h-11z" />
+        <path d="M13 16l-2 4h2l-1 3 4-5h-2l1-2z" fill="currentColor" />
+      </g>
+    );
+  }
+  return <path d="M6.5 18a4 4 0 0 1 0-8 5.5 5.5 0 0 1 10.6-1.4A4.5 4.5 0 0 1 17.5 18h-11z" />;
+}
+
+function weatherLabel(code) {
+  if (code === 0) return 'Clear';
+  if (code === 1) return 'Mainly clear';
+  if (code === 2) return 'Partly cloudy';
+  if (code === 3) return 'Overcast';
+  if (code === 45 || code === 48) return 'Foggy';
+  if (code >= 51 && code <= 55) return 'Drizzle';
+  if (code >= 56 && code <= 57) return 'Freezing drizzle';
+  if (code >= 61 && code <= 65) return 'Rain';
+  if (code >= 66 && code <= 67) return 'Freezing rain';
+  if (code >= 71 && code <= 75) return 'Snow';
+  if (code === 77) return 'Snow grains';
+  if (code >= 80 && code <= 82) return 'Rain showers';
+  if (code >= 85 && code <= 86) return 'Snow showers';
+  if (code >= 95) return 'Thunderstorm';
+  return 'Clear';
+}
+
+function useWeather() {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    let alive = true;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${WEATHER_LAT}&longitude=${WEATHER_LON}&current=temperature_2m,apparent_temperature,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Asia%2FKolkata&forecast_days=7`;
+
+    const fetchWeather = () => {
+      fetch(url)
+        .then((r) => r.json())
+        .then((d) => {
+          if (!alive) return;
+          setData(d);
+        })
+        .catch(() => {});
+    };
+
+    fetchWeather();
+    const i = setInterval(fetchWeather, 600000);
+
+    return () => {
+      alive = false;
+      clearInterval(i);
+    };
+  }, []);
+
+  return data;
+}
+
+function useClock() {
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const i = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(i);
+  }, []);
+
+  return now;
+}
 
 function useLanyard(userId) {
   const [data, setData] = useState(null);
@@ -1115,6 +1211,110 @@ function Socials() {
   );
 }
 
+function WeatherPanel({ mounted }) {
+  const weather = useWeather();
+  const now = useClock();
+  const [unit, setUnit] = useState('C');
+
+  const hours12 = now.getHours() % 12 || 12;
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+
+  const dateStr = now
+    .toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+    .toUpperCase();
+
+  const cur = weather?.current;
+  const daily = weather?.daily;
+
+  const toUnit = (c) => {
+    if (c === null || c === undefined) return '--';
+    return Math.round(unit === 'C' ? c : (c * 9) / 5 + 32);
+  };
+
+  const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+  return (
+    <div className={`weather ${mounted ? 'mounted' : ''}`}>
+      <div className="weather-top">
+        <div className="weather-left">
+          <div className="weather-time">
+            {hours12}:{minutes}
+            <span className="ampm">{ampm}</span>
+          </div>
+          <div className="weather-date">{dateStr}</div>
+        </div>
+
+        <div className="weather-mid">
+          <div className="weather-city">{WEATHER_CITY}</div>
+          <div className="weather-toggle">
+            <button
+              className={unit === 'C' ? 'active' : ''}
+              onClick={() => setUnit('C')}
+            >
+              C
+            </button>
+            <button
+              className={unit === 'F' ? 'active' : ''}
+              onClick={() => setUnit('F')}
+            >
+              F
+            </button>
+          </div>
+        </div>
+
+        <div className="weather-right">
+          {cur && (
+            <>
+              <svg
+                className="weather-icon"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                {weatherIcon(cur.weather_code, cur.is_day)}
+              </svg>
+              <div className="weather-temp">{toUnit(cur.temperature_2m)}°</div>
+              <div className="weather-cond">{weatherLabel(cur.weather_code)}</div>
+              <div className="weather-feels">
+                feels like {toUnit(cur.apparent_temperature)}°
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {daily && daily.time && (
+        <div className="weather-days">
+          {daily.time.map((t, i) => {
+            const d = new Date(t + 'T00:00:00');
+            const label = i === 0 ? 'TODAY' : dayNames[d.getDay()];
+            return (
+              <div className="weather-day" key={t}>
+                <div className="weather-day-name">{label}</div>
+                <svg
+                  className="weather-day-icon"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  {weatherIcon(daily.weather_code[i], true)}
+                </svg>
+                <div className="weather-day-hi">
+                  {toUnit(daily.temperature_2m_max[i])}°
+                </div>
+                <div className="weather-day-lo">
+                  {toUnit(daily.temperature_2m_min[i])}°
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Sidebar({ open, onClose, presence }) {
   return (
     <>
@@ -1316,6 +1516,8 @@ export default function App() {
               <Activity presence={presence} lastfm={lastfm} />
               <Socials />
             </div>
+
+            <WeatherPanel mounted={mounted} />
           </div>
 
           <button
@@ -1329,4 +1531,4 @@ export default function App() {
       )}
     </>
   );
-            }
+}
