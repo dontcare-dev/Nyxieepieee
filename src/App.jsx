@@ -688,7 +688,7 @@ animation-duration:.01ms !important;
 }
 `;
 
-const YT_VIDEO_ID = 'JTQzYgKOAjo';
+const YT_VIDEO_ID = 'Sv-hdv89Sv8';
 const YT_VOLUME = 55;
 const DISCORD_ID = '1429093326505640016';
 const LASTFM_USER = 'Nyxieepie';
