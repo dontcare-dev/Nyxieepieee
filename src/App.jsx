@@ -492,6 +492,24 @@ text-transform:uppercase;
 margin-top:6px;
 }
 
+.weather-battery{
+display:flex;
+align-items:center;
+gap:6px;
+margin-top:8px;
+font-size:.72rem;
+color:rgba(255,255,255,.6);
+letter-spacing:.05em;
+}
+
+.weather-battery.charging{color:#43b581}
+
+.battery-icon{
+width:22px;
+height:12px;
+flex-shrink:0;
+}
+
 .weather-mid{display:flex;flex-direction:column;align-items:center;gap:8px}
 
 .weather-city{
@@ -538,7 +556,7 @@ gap:2px;
 .weather-icon{
 width:52px;
 height:52px;
-fill:rgba(255,255,255,.85);
+color:rgba(255,255,255,.9);
 margin-bottom:4px;
 }
 
@@ -586,7 +604,7 @@ letter-spacing:.1em;
 text-transform:uppercase;
 }
 
-.weather-day-icon{width:28px;height:28px;fill:rgba(255,255,255,.8)}
+.weather-day-icon{width:28px;height:28px;color:rgba(255,255,255,.85)}
 
 .weather-day-hi{
 font-size:.85rem;
@@ -683,69 +701,96 @@ const SOCIALS = {
   sds: 'https://silver-dev-studios.github.io/SDS/',
 };
 
+const STROKE = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round' };
+
 const LastfmIcon = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true">
     <path d="M10.68 13.02c-.6-1.37-1.2-2.78-2.62-2.78-1.66 0-2.79 1.18-2.79 2.79 0 1.61 1.13 2.79 2.79 2.79 1.42 0 2.02-1.41 2.62-2.78zm5.71-1.55c-2.15-.43-3.43-1.28-3.43-2.79 0-1.51 1.25-2.42 3.05-2.42 1.94 0 3.02.85 3.58 2.26l1.9-.55C20.68 6.13 18.72 4.9 16 4.9c-2.87 0-5.02 1.5-5.02 3.83 0 2.05 1.51 3.32 4.34 3.87 2.25.44 3.13 1.03 3.13 2.17 0 1.24-1.21 2.03-3.19 2.03-2.16 0-3.06-.85-3.63-2.32l-1.89.55c.69 2.21 2.42 3.47 5.42 3.47 3.13 0 5.29-1.42 5.29-3.78 0-2.28-1.79-3.44-4.06-3.85zM24 12c0 6.63-5.37 12-12 12S0 18.63 0 12 5.37 0 12 0s12 5.37 12 12z" />
   </svg>
 );
 
-function weatherIcon(code, isDay) {
-  if (code === 0) {
-    return isDay ? (
-      <path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-5v3m0 14v3M2 12h3m14 0h3M4.2 4.2l2.1 2.1m11.4 11.4 2.1 2.1M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-    ) : (
-      <path d="M20.7 14.4A8.5 8.5 0 0 1 9.6 3.3a8.5 8.5 0 1 0 11.1 11.1z" />
-    );
-  }
-  if (code === 1 || code === 2) {
-    return (
-      <g>
-        <circle cx="8" cy="9" r="3.5" fill="currentColor" opacity=".9" />
-        <path d="M20.7 14.4A8.5 8.5 0 0 1 9.6 3.3a8.5 8.5 0 1 0 11.1 11.1z" opacity=".4" />
-      </g>
-    );
-  }
-  if (code === 3) {
-    return <path d="M6.5 18a4 4 0 0 1 0-8 5.5 5.5 0 0 1 10.6-1.4A4.5 4.5 0 0 1 17.5 18h-11z" />;
-  }
-  if (code === 45 || code === 48) {
-    return (
-      <g stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none">
-        <path d="M4 10h16M4 14h16M6 18h12" />
-      </g>
-    );
-  }
-  if ((code >= 51 && code <= 55) || (code >= 61 && code <= 65) || (code >= 80 && code <= 82)) {
-    return (
-      <g>
-        <path d="M6.5 15a4 4 0 0 1 0-8 5.5 5.5 0 0 1 10.6-1.4A4.5 4.5 0 0 1 17.5 15h-11z" />
-        <g stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none">
-          <path d="M8 18v2M12 18v3M16 18v2" />
-        </g>
-      </g>
-    );
-  }
-  if (code >= 71 && code <= 75) {
-    return (
-      <g>
-        <path d="M6.5 15a4 4 0 0 1 0-8 5.5 5.5 0 0 1 10.6-1.4A4.5 4.5 0 0 1 17.5 15h-11z" />
-        <g fill="currentColor">
-          <circle cx="8" cy="19" r="1" />
-          <circle cx="12" cy="20" r="1" />
-          <circle cx="16" cy="19" r="1" />
-        </g>
-      </g>
-    );
-  }
-  if (code >= 95) {
-    return (
-      <g>
-        <path d="M6.5 15a4 4 0 0 1 0-8 5.5 5.5 0 0 1 10.6-1.4A4.5 4.5 0 0 1 17.5 15h-11z" />
-        <path d="M13 16l-2 4h2l-1 3 4-5h-2l1-2z" fill="currentColor" />
-      </g>
-    );
-  }
-  return <path d="M6.5 18a4 4 0 0 1 0-8 5.5 5.5 0 0 1 10.6-1.4A4.5 4.5 0 0 1 17.5 18h-11z" />;
+const SunIcon = () => (
+  <g {...STROKE}>
+    <circle cx="12" cy="12" r="4" />
+    <line x1="12" y1="2" x2="12" y2="4" />
+    <line x1="12" y1="20" x2="12" y2="22" />
+    <line x1="2" y1="12" x2="4" y2="12" />
+    <line x1="20" y1="12" x2="22" y2="12" />
+    <line x1="4.93" y1="4.93" x2="6.34" y2="6.34" />
+    <line x1="17.66" y1="17.66" x2="19.07" y2="19.07" />
+    <line x1="4.93" y1="19.07" x2="6.34" y2="17.66" />
+    <line x1="17.66" y1="6.34" x2="19.07" y2="4.93" />
+  </g>
+);
+
+const MoonIcon = () => (
+  <path {...STROKE} d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+);
+
+const CloudIcon = () => (
+  <path {...STROKE} d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
+);
+
+const PartlyCloudyDay = () => (
+  <g {...STROKE}>
+    <circle cx="7" cy="7" r="2.6" />
+    <line x1="7" y1="1.8" x2="7" y2="3" />
+    <line x1="1.8" y1="7" x2="3" y2="7" />
+    <line x1="3.3" y1="3.3" x2="4.2" y2="4.2" />
+    <line x1="9.8" y1="4.2" x2="10.7" y2="3.3" />
+    <line x1="3.3" y1="10.7" x2="4.2" y2="9.8" />
+    <path d="M18 11.5h-1.1A6.5 6.5 0 1 0 10.5 20h7.5a4.25 4.25 0 0 0 0-8.5z" />
+  </g>
+);
+
+const PartlyCloudyNight = () => (
+  <g {...STROKE}>
+    <path d="M9 7.5A4 4 0 0 1 4.5 3a4 4 0 0 0 5 5.2A4 4 0 0 1 9 7.5z" />
+    <path d="M18 11.5h-1.1A6.5 6.5 0 1 0 10.5 20h7.5a4.25 4.25 0 0 0 0-8.5z" />
+  </g>
+);
+
+const FogIcon = () => (
+  <g {...STROKE}>
+    <path d="M17 9h-1.26A7 7 0 1 0 9 17h8a4 4 0 0 0 0-8z" />
+    <line x1="4" y1="21" x2="20" y2="21" />
+  </g>
+);
+
+const RainIcon = () => (
+  <g {...STROKE}>
+    <path d="M17 9h-1.26A7 7 0 1 0 9 17h8a4 4 0 0 0 0-8z" />
+    <line x1="9" y1="19" x2="8" y2="22" />
+    <line x1="13" y1="19" x2="12" y2="22" />
+    <line x1="17" y1="19" x2="16" y2="22" />
+  </g>
+);
+
+const SnowIcon = () => (
+  <g {...STROKE}>
+    <path d="M17 9h-1.26A7 7 0 1 0 9 17h8a4 4 0 0 0 0-8z" />
+    <circle cx="9" cy="20" r="0.9" fill="currentColor" stroke="none" />
+    <circle cx="13" cy="21.5" r="0.9" fill="currentColor" stroke="none" />
+    <circle cx="17" cy="20" r="0.9" fill="currentColor" stroke="none" />
+  </g>
+);
+
+const ThunderIcon = () => (
+  <g {...STROKE}>
+    <path d="M17 9h-1.26A7 7 0 1 0 9 17h8a4 4 0 0 0 0-8z" />
+    <path d="M13 16l-2.5 4.5h2.5L12 24l4-5.5h-2.3l1.3-2.5z" fill="currentColor" stroke="none" />
+  </g>
+);
+
+function WeatherIcon({ code, isDay }) {
+  if (code === 0) return isDay ? <SunIcon /> : <MoonIcon />;
+  if (code === 1 || code === 2) return isDay ? <PartlyCloudyDay /> : <PartlyCloudyNight />;
+  if (code === 3) return <CloudIcon />;
+  if (code === 45 || code === 48) return <FogIcon />;
+  if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return <RainIcon />;
+  if ((code >= 71 && code <= 77) || code === 85 || code === 86) return <SnowIcon />;
+  if (code >= 95) return <ThunderIcon />;
+  return <CloudIcon />;
 }
 
 function weatherLabel(code) {
@@ -764,6 +809,28 @@ function weatherLabel(code) {
   if (code >= 85 && code <= 86) return 'Snow showers';
   if (code >= 95) return 'Thunderstorm';
   return 'Clear';
+}
+
+function useBattery() {
+  const [battery, setBattery] = useState(null);
+  useEffect(() => {
+    if (!navigator.getBattery) return;
+    let b;
+    const update = () => setBattery({ level: Math.round(b.level * 100), charging: b.charging });
+    navigator.getBattery().then((bat) => {
+      b = bat;
+      update();
+      b.addEventListener('levelchange', update);
+      b.addEventListener('chargingchange', update);
+    });
+    return () => {
+      if (b) {
+        b.removeEventListener('levelchange', update);
+        b.removeEventListener('chargingchange', update);
+      }
+    };
+  }, []);
+  return battery;
 }
 
 function useWeather() {
@@ -1211,9 +1278,25 @@ function Socials() {
   );
 }
 
+function BatteryIndicator({ battery }) {
+  if (!battery) return null;
+  const fillW = Math.max(1, (battery.level / 100) * 14);
+  return (
+    <div className={`weather-battery ${battery.charging ? 'charging' : ''}`}>
+      <svg className="battery-icon" viewBox="0 0 24 12" aria-hidden="true">
+        <rect x="0.8" y="1.8" width="19.4" height="8.4" rx="2" fill="none" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="2.3" y="3.3" width={fillW} height="5.4" rx="0.8" fill="currentColor" />
+        <rect x="21.2" y="4.2" width="1.6" height="3.6" rx="0.6" fill="currentColor" />
+      </svg>
+      <span>{battery.level}%{battery.charging ? ' ⚡' : ''}</span>
+    </div>
+  );
+}
+
 function WeatherPanel({ mounted }) {
   const weather = useWeather();
   const now = useClock();
+  const battery = useBattery();
   const [unit, setUnit] = useState('C');
 
   const hours12 = now.getHours() % 12 || 12;
@@ -1243,6 +1326,7 @@ function WeatherPanel({ mounted }) {
             <span className="ampm">{ampm}</span>
           </div>
           <div className="weather-date">{dateStr}</div>
+          <BatteryIndicator battery={battery} />
         </div>
 
         <div className="weather-mid">
@@ -1266,13 +1350,8 @@ function WeatherPanel({ mounted }) {
         <div className="weather-right">
           {cur && (
             <>
-              <svg
-                className="weather-icon"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                {weatherIcon(cur.weather_code, cur.is_day)}
+              <svg className="weather-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <WeatherIcon code={cur.weather_code} isDay={cur.is_day === 1} />
               </svg>
               <div className="weather-temp">{toUnit(cur.temperature_2m)}°</div>
               <div className="weather-cond">{weatherLabel(cur.weather_code)}</div>
@@ -1292,13 +1371,8 @@ function WeatherPanel({ mounted }) {
             return (
               <div className="weather-day" key={t}>
                 <div className="weather-day-name">{label}</div>
-                <svg
-                  className="weather-day-icon"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  {weatherIcon(daily.weather_code[i], true)}
+                <svg className="weather-day-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <WeatherIcon code={daily.weather_code[i]} isDay={true} />
                 </svg>
                 <div className="weather-day-hi">
                   {toUnit(daily.temperature_2m_max[i])}°
@@ -1531,4 +1605,4 @@ export default function App() {
       )}
     </>
   );
-}
+              }
