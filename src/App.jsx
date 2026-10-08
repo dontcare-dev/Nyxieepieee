@@ -19,10 +19,8 @@ overflow-x:hidden;
 .app{
 min-height:100vh;
 display:flex;
-flex-direction:column;
 align-items:center;
 justify-content:center;
-gap:16px;
 padding:96px 20px 32px;
 position:relative;
 overflow:hidden;
@@ -440,85 +438,52 @@ transition:background .3s ease,color .3s ease,transform .3s ease,border-color .3
 .social:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.25);color:#fff;transform:translateY(-2px)}
 .social svg{width:18px;height:18px;fill:currentColor}
 
-.strip{
-position:relative;
-z-index:2;
+.infostrip{
 width:100%;
-max-width:380px;
+margin-top:16px;
+padding:12px 14px;
+background:rgba(255,255,255,.03);
+border:1px solid rgba(255,255,255,.06);
+border-radius:14px;
 display:flex;
 align-items:center;
 justify-content:space-between;
-gap:14px;
-padding:14px 22px;
-background:rgba(20,20,24,.55);
-backdrop-filter:blur(20px) saturate(140%);
--webkit-backdrop-filter:blur(20px) saturate(140%);
-border:1px solid rgba(255,255,255,.08);
-border-radius:999px;
-box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04);
-opacity:0;
-transform:translateY(20px);
-transition:opacity 1.2s cubic-bezier(.25,.1,.25,1) .3s,transform 1.2s cubic-bezier(.25,.1,.25,1) .3s;
+gap:10px;
 }
 
-.strip.mounted{opacity:1;transform:translateY(0)}
-
-.strip-clock{
-font-size:1.15rem;
+.infostrip-clock{
+font-size:1rem;
 color:#fff;
 letter-spacing:.04em;
 display:flex;
+align-items:baseline;
+gap:4px;
+text-shadow:0 1px 8px rgba(0,0,0,.5);
+}
+
+.infostrip-clock .ampm{
+font-size:.75rem;
+color:rgba(255,255,255,.6);
+}
+
+.infostrip-weather{
+display:flex;
 align-items:center;
 gap:6px;
-flex-shrink:0;
-text-shadow:0 2px 10px rgba(0,0,0,.5);
 }
 
-.strip-clock .ampm{
-font-size:.85rem;
-color:rgba(255,255,255,.7);
-}
-
-.strip-battery{
-display:flex;
-align-items:center;
-gap:5px;
-font-size:.8rem;
-color:rgba(255,255,255,.55);
-letter-spacing:.03em;
-flex-shrink:0;
-}
-
-.strip-battery.charging{color:#43b581}
-
-.strip-battery svg{width:20px;height:11px;flex-shrink:0}
-
-.strip-divider{
-width:1px;
-height:20px;
-background:rgba(255,255,255,.1);
-flex-shrink:0;
-}
-
-.strip-weather{
-display:flex;
-align-items:center;
-gap:8px;
-flex-shrink:0;
-}
-
-.strip-weather svg{
-width:26px;
-height:26px;
+.infostrip-weather svg{
+width:22px;
+height:22px;
 color:rgba(255,255,255,.85);
 flex-shrink:0;
 }
 
-.strip-temp{
-font-size:1.15rem;
+.infostrip-temp{
+font-size:1rem;
 color:#fff;
 letter-spacing:.04em;
-text-shadow:0 2px 10px rgba(0,0,0,.5);
+text-shadow:0 1px 8px rgba(0,0,0,.5);
 }
 
 .music-toggle{
@@ -560,7 +525,6 @@ transition-duration:.01ms !important;
 animation-duration:.01ms !important;
 }
 .card{opacity:1;transform:translateY(0)}
-.strip{opacity:1;transform:translateY(0)}
 .gate-title,.gate-sub,.enter-btn,.gate-audio{opacity:1;filter:blur(0);animation:none}
 .flash-gif{display:none}
 }
@@ -574,13 +538,10 @@ animation-duration:.01ms !important;
 .topbar{width:calc(100% - 24px);top:10px}
 .sidebar{width:260px}
 .topbar-gif{height:28px}
-.strip{padding:12px 16px;gap:10px}
-.strip-clock{font-size:1rem}
-.strip-clock .ampm{font-size:.75rem}
-.strip-temp{font-size:1rem}
-.strip-weather svg{width:22px;height:22px}
-.strip-battery{font-size:.72rem}
-.strip-battery svg{width:18px;height:10px}
+.infostrip{padding:10px 12px}
+.infostrip-clock{font-size:.9rem}
+.infostrip-temp{font-size:.9rem}
+.infostrip-weather svg{width:20px;height:20px}
 }
 `;
 
@@ -692,28 +653,6 @@ function WeatherIcon({ code, isDay }) {
   if ((code >= 71 && code <= 77) || code === 85 || code === 86) return <SnowIcon />;
   if (code >= 95) return <ThunderIcon />;
   return <CloudIcon />;
-}
-
-function useBattery() {
-  const [battery, setBattery] = useState(null);
-  useEffect(() => {
-    if (!navigator.getBattery) return;
-    let b;
-    const update = () => setBattery({ level: Math.round(b.level * 100), charging: b.charging });
-    navigator.getBattery().then((bat) => {
-      b = bat;
-      update();
-      b.addEventListener('levelchange', update);
-      b.addEventListener('chargingchange', update);
-    });
-    return () => {
-      if (b) {
-        b.removeEventListener('levelchange', update);
-        b.removeEventListener('chargingchange', update);
-      }
-    };
-  }, []);
-  return battery;
 }
 
 function useWeather() {
@@ -1161,10 +1100,9 @@ function Socials() {
   );
 }
 
-function BottomStrip({ mounted }) {
+function InfoStrip() {
   const now = useClock();
   const weather = useWeather();
-  const battery = useBattery();
 
   const hours12 = now.getHours() % 12 || 12;
   const minutes = now.getMinutes().toString().padStart(2, '0');
@@ -1172,36 +1110,20 @@ function BottomStrip({ mounted }) {
 
   const cur = weather?.current;
   const temp = cur ? Math.round(cur.temperature_2m) : null;
-  const fillW = battery ? Math.max(1, (battery.level / 100) * 13) : 0;
 
   return (
-    <div className={`strip ${mounted ? 'mounted' : ''}`}>
-      <div className="strip-clock">
+    <div className="infostrip">
+      <div className="infostrip-clock">
         {hours12}:{minutes}
         <span className="ampm">{ampm}</span>
       </div>
 
-      {battery && (
-        <div className={`strip-battery ${battery.charging ? 'charging' : ''}`}>
-          <svg viewBox="0 0 22 11" aria-hidden="true">
-            <rect x="0.6" y="1.6" width="18.8" height="7.8" rx="2" fill="none" stroke="currentColor" strokeWidth="1.1" />
-            <rect x="2" y="3" width={fillW} height="5" rx="0.7" fill="currentColor" />
-            <rect x="20.2" y="4" width="1.5" height="3" rx="0.5" fill="currentColor" />
-          </svg>
-          <span>
-            {battery.level}%{battery.charging ? ' ⚡' : ''}
-          </span>
-        </div>
-      )}
-
-      <div className="strip-divider" />
-
       {cur && (
-        <div className="strip-weather">
+        <div className="infostrip-weather">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <WeatherIcon code={cur.weather_code} isDay={cur.is_day === 1} />
           </svg>
-          <span className="strip-temp">{temp}°</span>
+          <span className="infostrip-temp">{temp}°</span>
         </div>
       )}
     </div>
@@ -1408,9 +1330,8 @@ export default function App() {
               </p>
               <Activity presence={presence} lastfm={lastfm} />
               <Socials />
+              <InfoStrip />
             </div>
-
-            <BottomStrip mounted={mounted} />
           </div>
 
           <button
@@ -1424,4 +1345,4 @@ export default function App() {
       )}
     </>
   );
-      }
+        }
