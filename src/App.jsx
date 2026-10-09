@@ -459,6 +459,7 @@ display:flex;
 align-items:baseline;
 gap:4px;
 text-shadow:0 1px 8px rgba(0,0,0,.5);
+flex-shrink:0;
 }
 
 .infostrip-clock .ampm{
@@ -466,10 +467,31 @@ font-size:.75rem;
 color:rgba(255,255,255,.6);
 }
 
+.infostrip-gif{
+flex:1;
+height:26px;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+border-radius:6px;
+margin:0 6px;
+}
+
+.infostrip-gif img{
+height:100%;
+width:auto;
+max-width:100%;
+object-fit:contain;
+display:block;
+border-radius:6px;
+}
+
 .infostrip-weather{
 display:flex;
 align-items:center;
 gap:6px;
+flex-shrink:0;
 }
 
 .infostrip-weather svg{
@@ -542,6 +564,7 @@ animation-duration:.01ms !important;
 .infostrip-clock{font-size:.9rem}
 .infostrip-temp{font-size:.9rem}
 .infostrip-weather svg{width:20px;height:20px}
+.infostrip-gif{height:22px;margin:0 4px}
 }
 `;
 
@@ -554,6 +577,7 @@ const TOPBAR_GIF = 'https://i.ibb.co/Xx6DndSg/1edbf144909f2bbfcff412393422984c-1
 const BANNER_IMG = 'https://i.ibb.co/pvjjSdYR/4a512a8a2ff8250963067e665a0aded9.jpg';
 const BG_GIF = 'https://i.ibb.co/VWgztGwR/d895c222e5fe92cb334de04e6d8f6828.gif';
 const FLASH_GIF = 'https://i.ibb.co/fV5RJRSH/328c881f1929b778adcc7d9c1c75adcd.gif';
+const INFO_GIF = 'https://i.ibb.co/qL8xCVn7/807b5c4b02e765bb4930b7c66662ef4b.gif';
 const WEATHER_LAT = 28.6139;
 const WEATHER_LON = 77.2090;
 
@@ -1118,6 +1142,10 @@ function InfoStrip() {
         <span className="ampm">{ampm}</span>
       </div>
 
+      <div className="infostrip-gif">
+        <img src={INFO_GIF} alt="" aria-hidden="true" />
+      </div>
+
       {cur && (
         <div className="infostrip-weather">
           <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -1345,4 +1373,4 @@ export default function App() {
       )}
     </>
   );
-        }
+}
