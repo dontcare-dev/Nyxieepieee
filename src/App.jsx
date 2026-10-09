@@ -78,12 +78,28 @@ flex-direction:column;
 align-items:center;
 justify-content:center;
 background:#07070a;
+background-image:url('https://i.ibb.co/N6NNnnDv/nyx-blurry-1.webp');
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
 transition:opacity .8s cubic-bezier(.25,.1,.25,1),visibility .8s;
+}
+
+.gate::before{
+content:'';
+position:absolute;
+inset:0;
+background:
+radial-gradient(circle at 50% 50%, rgba(0,0,0,.35), rgba(0,0,0,.8) 100%),
+linear-gradient(180deg, rgba(7,7,10,.4), rgba(7,7,10,.7));
+pointer-events:none;
+z-index:-1;
 }
 
 .gate.hidden{opacity:0;visibility:hidden;pointer-events:none}
 
 .gate-title{
+position:relative;
 font-size:clamp(2.4rem,9vw,4rem);
 color:#fff;
 letter-spacing:.02em;
@@ -91,34 +107,38 @@ margin-bottom:8px;
 opacity:0;
 filter:blur(14px);
 animation:gateTitle 1.6s cubic-bezier(.25,.1,.25,1) .3s forwards;
+text-shadow:0 4px 24px rgba(0,0,0,.8);
 }
 
 @keyframes gateTitle{to{opacity:1;filter:blur(0)}}
 
 .gate-sub{
+position:relative;
 font-size:1rem;
-color:rgba(255,255,255,.4);
+color:rgba(255,255,255,.55);
 letter-spacing:.08em;
 margin-bottom:36px;
 opacity:0;
 animation:gateSub 1.4s cubic-bezier(.25,.1,.25,1) 1.2s forwards;
+text-shadow:0 2px 12px rgba(0,0,0,.8);
 }
 
 @keyframes gateSub{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 .gate-audio{
+position:relative;
 display:flex;
 align-items:center;
 gap:10px;
 margin-bottom:22px;
 padding:9px 16px;
-background:rgba(255,255,255,.04);
-border:1px solid rgba(255,255,255,.08);
+background:rgba(255,255,255,.06);
+border:1px solid rgba(255,255,255,.12);
 border-radius:999px;
 font-family:'Chewy',cursive;
 font-size:.85rem;
 letter-spacing:.06em;
-color:rgba(255,255,255,.6);
+color:rgba(255,255,255,.75);
 cursor:pointer;
 backdrop-filter:blur(12px);
 -webkit-backdrop-filter:blur(12px);
@@ -127,10 +147,11 @@ animation:gateBtn 1.4s cubic-bezier(.25,.1,.25,1) 1.55s forwards;
 transition:background .3s ease,border-color .3s ease,color .3s ease;
 }
 
-.gate-audio:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#fff}
+.gate-audio:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:#fff}
 .gate-audio svg{width:14px;height:14px;fill:currentColor;flex-shrink:0}
 
 .enter-btn{
+position:relative;
 background:rgba(255,255,255,.06);
 border:1px solid rgba(255,255,255,.12);
 color:#fff;
@@ -542,6 +563,16 @@ opacity:0;
 pointer-events:none;
 }
 
+.preload-img{
+position:absolute;
+width:1px;
+height:1px;
+opacity:0;
+pointer-events:none;
+top:0;
+left:0;
+}
+
 @media (prefers-reduced-motion:reduce){
 *,*::before,*::after{
 transition-duration:.01ms !important;
@@ -579,6 +610,7 @@ const BANNER_IMG = 'https://i.ibb.co/pvjjSdYR/4a512a8a2ff8250963067e665a0aded9.j
 const BG_GIF = 'https://i.ibb.co/VWgztGwR/d895c222e5fe92cb334de04e6d8f6828.gif';
 const FLASH_GIF = 'https://i.ibb.co/fV5RJRSH/328c881f1929b778adcc7d9c1c75adcd.gif';
 const INFO_GIF = 'https://i.ibb.co/qL8xCVn7/807b5c4b02e765bb4930b7c66662ef4b.gif';
+const LOADING_BG = 'https://i.ibb.co/N6NNnnDv/nyx-blurry-1.webp';
 const WEATHER_LAT = 28.6139;
 const WEATHER_LON = 77.2090;
 
@@ -1284,6 +1316,8 @@ export default function App() {
     <>
       <style>{styles}</style>
 
+      <img className="preload-img" src={LOADING_BG} alt="" aria-hidden="true" />
+
       <img className="bg-gif" src={BG_GIF} alt="" aria-hidden="true" />
       <div className="bg-overlay" />
 
@@ -1374,4 +1408,4 @@ export default function App() {
       )}
     </>
   );
-    }
+        }
