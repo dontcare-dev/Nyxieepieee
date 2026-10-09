@@ -469,13 +469,14 @@ color:rgba(255,255,255,.6);
 
 .infostrip-gif{
 flex:1;
-height:26px;
+min-width:0;
+height:48px;
 display:flex;
 align-items:center;
 justify-content:center;
 overflow:hidden;
-border-radius:6px;
-margin:0 6px;
+border-radius:8px;
+margin:0 8px;
 }
 
 .infostrip-gif img{
@@ -484,7 +485,7 @@ width:auto;
 max-width:100%;
 object-fit:contain;
 display:block;
-border-radius:6px;
+border-radius:8px;
 }
 
 .infostrip-weather{
@@ -564,7 +565,7 @@ animation-duration:.01ms !important;
 .infostrip-clock{font-size:.9rem}
 .infostrip-temp{font-size:.9rem}
 .infostrip-weather svg{width:20px;height:20px}
-.infostrip-gif{height:22px;margin:0 4px}
+.infostrip-gif{height:40px;margin:0 6px}
 }
 `;
 
@@ -1373,4 +1374,4 @@ export default function App() {
       )}
     </>
   );
-}
+    }
