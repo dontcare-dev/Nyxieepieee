@@ -3,631 +3,89 @@ import { useForm, ValidationError } from '@formspree/react';
 
 const styles = `
 @import url('https://fonts.googleapis.com/css2?family=Chewy&display=swap');
-
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-
-html,body{height:100%}
-
-body{
-background:#07070a;
-color:#e8e8e8;
-font-family:'Chewy',cursive;
--webkit-font-smoothing:antialiased;
--moz-osx-font-smoothing:grayscale;
-overflow-x:hidden;
-}
-
-.app{
-min-height:100vh;
-display:flex;
-flex-direction:column;
-align-items:center;
-padding:96px 20px 32px;
-position:relative;
-overflow:hidden;
-}
-
-.bg-gif{
-position:fixed;
-top:50%;
-left:50%;
-min-width:100%;
-min-height:100%;
-width:auto;
-height:auto;
-transform:translate(-50%,-50%);
-object-fit:cover;
-z-index:0;
-pointer-events:none;
-opacity:1;
-}
-
-.bg-overlay{
-position:fixed;
-inset:0;
-background:
-radial-gradient(circle at 50% 50%, rgba(0,0,0,.15), rgba(0,0,0,.55) 100%),
-linear-gradient(180deg, rgba(7,7,10,.2), rgba(7,7,10,.5));
-z-index:1;
-pointer-events:none;
-}
-
-.heart-canvas{
-position:fixed;
-top:0;
-left:0;
-width:100vw;
-height:100vh;
-pointer-events:none;
-z-index:5;
-}
-
-.flash-gif{
-position:fixed;
-top:50%;
-left:50%;
-min-width:100%;
-min-height:100%;
-width:auto;
-height:auto;
-transform:translate(-50%,-50%);
-object-fit:cover;
-z-index:25;
-pointer-events:none;
-opacity:0;
-transition:opacity .35s ease;
-}
-
+html,body{height:100%;overflow:hidden;background:#07070a;}
+body{color:#e8e8e8;font-family:'Chewy',cursive;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+.app{height:100vh;width:100vw;display:flex;flex-direction:column;align-items:center;padding:80px 20px 20px;position:relative;overflow:hidden;}
+.bg-gif{position:fixed;top:50%;left:50%;min-width:100%;min-height:100%;width:auto;height:auto;transform:translate(-50%,-50%);object-fit:cover;z-index:0;pointer-events:none;opacity:1;}
+.bg-overlay{position:fixed;inset:0;background:radial-gradient(circle at 50% 50%, rgba(0,0,0,.15), rgba(0,0,0,.55) 100%),linear-gradient(180deg, rgba(7,7,10,.2), rgba(7,7,10,.5));z-index:1;pointer-events:none;}
+.heart-canvas{position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:5;}
+.flash-gif{position:fixed;top:50%;left:50%;min-width:100%;min-height:100%;width:auto;height:auto;transform:translate(-50%,-50%);object-fit:cover;z-index:25;pointer-events:none;opacity:0;transition:opacity .35s ease;}
 .flash-gif.active{opacity:.55}
-
-.gate{
-position:fixed;
-inset:0;
-z-index:50;
-display:flex;
-align-items:center;
-justify-content:center;
-background:#07070a;
-cursor:pointer;
-transition:opacity .8s cubic-bezier(.25,.1,.25,1),visibility .8s;
-}
-
+.gate{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:#07070a;cursor:pointer;transition:opacity .8s cubic-bezier(.25,.1,.25,1),visibility .8s;}
 .gate.hidden{opacity:0;visibility:hidden;pointer-events:none}
-
-.gate-img{
-width:100vw;
-height:100vh;
-object-fit:cover;
-display:block;
-}
-
-.navbar{
-position:fixed;
-top:14px;
-left:50%;
-transform:translateX(-50%);
-width:calc(100% - 32px);
-max-width:440px;
-z-index:30;
-background:rgba(14,14,18,.82);
-border:1px solid rgba(255,255,255,.08);
-border-radius:999px;
-padding:6px 8px;
-display:flex;
-align-items:center;
-justify-content:space-between;
-backdrop-filter:blur(20px) saturate(140%);
--webkit-backdrop-filter:blur(20px) saturate(140%);
-box-shadow:0 8px 32px rgba(0,0,0,.5);
-}
-
-.nav-item{
-display:flex;
-align-items:center;
-gap:8px;
-padding:8px 16px;
-border-radius:999px;
-color:rgba(255,255,255,.5);
-text-decoration:none;
-font-size:.9rem;
-letter-spacing:.04em;
-cursor:pointer;
-transition:background .3s ease,color .3s ease;
-border:none;
-background:transparent;
-font-family:'Chewy',cursive;
-}
-
-.nav-item.active{
-background:rgba(255,255,255,.1);
-color:#fff;
-}
-
-.nav-item svg{
-width:18px;
-height:18px;
-fill:currentColor;
-}
-
-.nav-item:hover:not(.active){
-color:rgba(255,255,255,.8);
-}
-
-.page-content{
-position:relative;
-z-index:10;
-width:100%;
-max-width:440px;
-display:flex;
-flex-direction:column;
-gap:20px;
-animation:pageFade 0.5s ease forwards;
-}
-
+.gate-img{width:100vw;height:100vh;object-fit:cover;display:block;}
+.navbar{position:fixed;top:14px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:440px;z-index:30;background:rgba(14,14,18,.82);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:6px 8px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);box-shadow:0 8px 32px rgba(0,0,0,.5);}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;color:rgba(255,255,255,.5);text-decoration:none;font-size:.9rem;letter-spacing:.04em;cursor:pointer;transition:background .3s ease,color .3s ease;border:none;background:transparent;font-family:'Chewy',cursive;}
+.nav-item.active{background:rgba(255,255,255,.1);color:#fff;}
+.nav-item svg{width:18px;height:18px;fill:currentColor;}
+.nav-item:hover:not(.active){color:rgba(255,255,255,.8);}
+.page-content{position:relative;z-index:10;width:100%;max-width:440px;height:100%;display:flex;flex-direction:column;gap:16px;animation:pageFade 0.5s ease forwards;overflow-y:auto;padding-bottom:20px;scrollbar-width:none;}
+.page-content::-webkit-scrollbar{display:none;}
 @keyframes pageFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-
-.profile-section{
-display:flex;
-align-items:center;
-gap:24px;
-padding:20px 10px;
-}
-
-.avatar-wrap{
-position:relative;
-flex-shrink:0;
-width:110px;
-height:110px;
-}
-
-.avatar{
-width:100%;
-height:100%;
-border-radius:50%;
-object-fit:cover;
-display:block;
-background:rgba(255,255,255,.05);
-}
-
-.status-dot{
-position:absolute;
-bottom:4px;
-right:4px;
-width:22px;
-height:22px;
-border-radius:50%;
-border:4px solid #07070a;
-}
-
-.profile-info{
-display:flex;
-flex-direction:column;
-gap:2px;
-}
-
-.profile-name{
-font-size:2.2rem;
-color:#fff;
-letter-spacing:.02em;
-line-height:1.1;
-}
-
-.profile-handle{
-font-size:1.1rem;
-color:rgba(255,255,255,.45);
-letter-spacing:.02em;
-}
-
-.profile-bio{
-font-size:1rem;
-color:rgba(255,255,255,.7);
-margin-top:12px;
-line-height:1.5;
-}
-
-.weather-card{
-background:rgba(255,255,255,.02);
-border:1px solid rgba(255,255,255,.06);
-border-radius:20px;
-padding:24px 20px;
-display:flex;
-flex-direction:column;
-gap:24px;
-}
-
-.weather-top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.weather-left{
-display:flex;
-flex-direction:column;
-gap:4px;
-}
-
-.weather-time{
-font-size:2.2rem;
-color:#fff;
-line-height:1;
-letter-spacing:.02em;
-}
-
-.weather-time .ampm{
-font-size:1.2rem;
-margin-left:6px;
-color:rgba(255,255,255,.8);
-}
-
-.weather-date{
-font-size:.85rem;
-color:rgba(255,255,255,.4);
-letter-spacing:.14em;
-text-transform:uppercase;
-margin-top:6px;
-}
-
-.weather-mid{
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:12px;
-}
-
-.weather-city{
-font-size:.75rem;
-color:rgba(255,255,255,.5);
-letter-spacing:.18em;
-text-transform:uppercase;
-}
-
-.weather-toggle{
-display:flex;
-background:rgba(255,255,255,.04);
-border:1px solid rgba(255,255,255,.08);
-border-radius:999px;
-padding:4px;
-}
-
-.weather-toggle button{
-background:transparent;
-border:none;
-font-family:'Chewy',cursive;
-font-size:.9rem;
-color:rgba(255,255,255,.5);
-width:40px;
-height:32px;
-border-radius:999px;
-cursor:pointer;
-transition:background .3s ease,color .3s ease;
-}
-
-.weather-toggle button.active{
-background:rgba(255,255,255,.12);
-color:#fff;
-}
-
-.weather-right{
-display:flex;
-flex-direction:column;
-align-items:flex-end;
-gap:2px;
-}
-
-.weather-icon{
-width:56px;
-height:56px;
-color:rgba(255,255,255,.9);
-margin-bottom:8px;
-}
-
-.weather-temp{
-font-size:2.2rem;
-color:#fff;
-line-height:1;
-}
-
-.weather-cond{
-font-size:.95rem;
-color:#fff;
-margin-top:4px;
-text-align:right;
-}
-
-.weather-feels{
-font-size:.85rem;
-color:rgba(255,255,255,.4);
-margin-top:4px;
-}
-
-.weather-days{
-display:grid;
-grid-template-columns:repeat(7,1fr);
-gap:8px;
-padding-top:20px;
-border-top:1px solid rgba(255,255,255,.06);
-}
-
-.weather-day{
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:10px;
-}
-
-.weather-day-name{
-font-size:.7rem;
-color:rgba(255,255,255,.4);
-letter-spacing:.1em;
-text-transform:uppercase;
-}
-
-.weather-day-icon{width:28px;height:28px;color:rgba(255,255,255,.8)}
-
-.weather-day-hi{
-font-size:.95rem;
-color:#fff;
-}
-
-.weather-day-lo{
-font-size:.75rem;
-color:rgba(255,255,255,.4);
-}
-
-.activity-card{
-background:rgba(255,255,255,.04);
-border:1px solid rgba(255,255,255,.06);
-border-radius:16px;
-padding:14px 16px;
-display:flex;
-align-items:center;
-gap:14px;
-}
-
-.activity-icon{width:48px;height:48px;border-radius:12px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,.05)}
+.profile-section{display:flex;align-items:center;gap:20px;padding:10px;}
+.avatar-wrap{position:relative;flex-shrink:0;width:90px;height:90px;}
+.avatar{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;background:rgba(255,255,255,.05);}
+.status-dot{position:absolute;bottom:2px;right:2px;width:20px;height:20px;border-radius:50%;border:4px solid #07070a;}
+.profile-info{display:flex;flex-direction:column;gap:2px;}
+.profile-name{font-size:2rem;color:#fff;letter-spacing:.02em;line-height:1.1;}
+.profile-handle{font-size:1rem;color:rgba(255,255,255,.45);letter-spacing:.02em;}
+.profile-bio{font-size:.9rem;color:rgba(255,255,255,.7);margin-top:8px;line-height:1.4;}
+.weather-card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:20px;display:flex;justify-content:space-between;align-items:center;}
+.weather-left{display:flex;flex-direction:column;gap:4px;}
+.weather-time{font-size:2rem;color:#fff;line-height:1;letter-spacing:.02em;}
+.weather-time .ampm{font-size:1.1rem;margin-left:4px;color:rgba(255,255,255,.8);}
+.weather-date{font-size:.75rem;color:rgba(255,255,255,.4);letter-spacing:.14em;text-transform:uppercase;margin-top:4px;}
+.weather-mid{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.weather-city{font-size:.7rem;color:rgba(255,255,255,.5);letter-spacing:.18em;text-transform:uppercase;}
+.weather-toggle{display:flex;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:3px;}
+.weather-toggle button{background:transparent;border:none;font-family:'Chewy',cursive;font-size:.8rem;color:rgba(255,255,255,.5);width:32px;height:28px;border-radius:999px;cursor:pointer;transition:background .3s ease,color .3s ease;}
+.weather-toggle button.active{background:rgba(255,255,255,.12);color:#fff;}
+.weather-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
+.weather-icon{width:44px;height:44px;color:rgba(255,255,255,.9);margin-bottom:4px;}
+.weather-temp{font-size:2rem;color:#fff;line-height:1;}
+.weather-cond{font-size:.85rem;color:#fff;margin-top:2px;text-align:right;}
+.weather-feels{font-size:.75rem;color:rgba(255,255,255,.4);margin-top:2px;}
+.activity-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:12px;}
+.activity-icon{width:40px;height:40px;border-radius:10px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,.05)}
 .activity-text{flex:1;min-width:0}
-.activity-name{font-size:1rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.activity-sub{font-size:.85rem;color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.activity-source{font-size:.75rem;color:rgba(255,255,255,.4);letter-spacing:.06em;text-transform:uppercase;margin-top:4px;display:flex;align-items:center;gap:6px}
-.activity-source svg{width:12px;height:12px;fill:#d51007;flex-shrink:0}
-
-.progress-container{display:flex;flex-direction:column;gap:6px;margin-top:8px}
-.progress-bar{width:100%;height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+.activity-name{font-size:.95rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.activity-sub{font-size:.8rem;color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.activity-source{font-size:.7rem;color:rgba(255,255,255,.4);letter-spacing:.06em;text-transform:uppercase;margin-top:2px;display:flex;align-items:center;gap:4px}
+.activity-source svg{width:10px;height:10px;fill:#d51007;flex-shrink:0}
+.progress-container{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+.progress-bar{width:100%;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
 .progress-fill{height:100%;background:rgba(255,255,255,.6);transition:width 1s linear}
-.progress-time{display:flex;justify-content:space-between;font-size:.7rem;color:rgba(255,255,255,.35)}
-
-.socials-grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:16px;
-}
-
-.social-card{
-background:rgba(255,255,255,.03);
-border:1px solid rgba(255,255,255,.08);
-border-radius:20px;
-padding:24px 20px;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-gap:12px;
-text-decoration:none;
-color:#fff;
-transition:background .3s ease, transform .2s ease;
-}
-
-.social-card:hover{
-background:rgba(255,255,255,.06);
-transform:translateY(-3px);
-}
-
-.social-card svg{
-width:32px;
-height:32px;
-fill:currentColor;
-}
-
-.social-card-title{
-font-size:1.1rem;
-}
-
-.page-title{
-font-size:2rem;
-color:#fff;
-margin-bottom:10px;
-}
-
-.page-subtitle{
-font-size:1rem;
-color:rgba(255,255,255,.5);
-margin-bottom:20px;
-}
-
-/* Projects specific styling */
-.project-wide-card {
-background: rgba(255,255,255,.03);
-border: 1px solid rgba(255,255,255,.08);
-border-radius: 24px;
-overflow: hidden;
-display: flex;
-flex-direction: column;
-text-decoration: none;
-color: inherit;
-transition: transform .3s ease, border-color .3s ease;
-cursor: pointer;
-}
-
-.project-wide-card:hover {
-transform: translateY(-4px);
-border-color: rgba(255,255,255,.15);
-}
-
-.project-preview {
-width: 100%;
-height: 200px;
-object-fit: cover;
-border-bottom: 1px solid rgba(255,255,255,.08);
-}
-
-.project-content {
-padding: 20px;
-display: flex;
-flex-direction: column;
-gap: 8px;
-}
-
-.project-card-title {
-font-size: 1.4rem;
-color: #fff;
-}
-
-.project-card-desc {
-font-size: .95rem;
-color: rgba(255,255,255,.6);
-line-height: 1.5;
-}
-
-/* Contact form styling */
-.contact-form {
-display: flex;
-flex-direction: column;
-gap: 16px;
-background: rgba(255,255,255,.02);
-border: 1px solid rgba(255,255,255,.06);
-border-radius: 20px;
-padding: 24px;
-}
-
-.form-group {
-display: flex;
-flex-direction: column;
-gap: 6px;
-}
-
-.form-group label {
-font-size: .9rem;
-color: rgba(255,255,255,.6);
-margin-left: 4px;
-}
-
-.form-input {
-background: rgba(255,255,255,.04);
-border: 1px solid rgba(255,255,255,.08);
-border-radius: 14px;
-padding: 14px 16px;
-color: #fff;
-font-family: 'Chewy', cursive;
-font-size: 1rem;
-outline: none;
-transition: border-color .3s ease, background .3s ease;
-}
-
-.form-input:focus {
-border-color: rgba(255,255,255,.3);
-background: rgba(255,255,255,.06);
-}
-
-textarea.form-input {
-resize: vertical;
-min-height: 120px;
-}
-
-.error-text {
-color: #ff4a4a;
-font-size: .8rem;
-margin-left: 4px;
-margin-top: 2px;
-}
-
-.submit-btn {
-background: #fff;
-color: #000;
-border: none;
-border-radius: 14px;
-padding: 16px;
-font-family: 'Chewy', cursive;
-font-size: 1.1rem;
-cursor: pointer;
-transition: opacity .3s ease, transform .2s ease;
-margin-top: 8px;
-}
-
-.submit-btn:hover:not(:disabled) {
-opacity: .9;
-transform: translateY(-2px);
-}
-
-.submit-btn:active:not(:disabled) {
-transform: translateY(0);
-}
-
-.submit-btn:disabled {
-opacity: .5;
-cursor: not-allowed;
-}
-
-.success-message {
-background: rgba(67, 181, 129, 0.15);
-border: 1px solid rgba(67, 181, 129, 0.3);
-color: #43b581;
-padding: 16px;
-border-radius: 14px;
-text-align: center;
-font-size: 1.1rem;
-}
-
-.music-toggle{
-position:fixed;
-bottom:20px;
-right:20px;
-z-index:26;
-width:44px;
-height:44px;
-border-radius:50%;
-background:rgba(20,20,24,.7);
-border:1px solid rgba(255,255,255,.1);
-color:rgba(255,255,255,.6);
-font-size:1rem;
-cursor:pointer;
-display:flex;
-align-items:center;
-justify-content:center;
-backdrop-filter:blur(12px);
--webkit-backdrop-filter:blur(12px);
-transition:background .3s ease,color .3s ease;
-}
-
+.progress-time{display:flex;justify-content:space-between;font-size:.65rem;color:rgba(255,255,255,.35)}
+.socials{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:10px;}
+.social{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;transition:background .3s ease,color .3s ease,transform .3s ease,border-color .3s ease;flex-shrink:0;}
+.social:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);color:#fff;transform:translateY(-2px)}
+.social svg{width:20px !important;height:20px !important;max-width:20px;max-height:20px;fill:currentColor}
+.page-title{font-size:1.8rem;color:#fff;margin-bottom:4px;}
+.page-subtitle{font-size:.9rem;color:rgba(255,255,255,.5);margin-bottom:10px;}
+.project-wide-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:inherit;transition:transform .3s ease,border-color .3s ease;cursor:pointer;}
+.project-wide-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.15)}
+.project-preview{width:100%;height:160px;object-fit:cover;border-bottom:1px solid rgba(255,255,255,.08);}
+.project-content{padding:16px;display:flex;flex-direction:column;gap:6px;}
+.project-card-title{font-size:1.2rem;color:#fff;}
+.project-card-desc{font-size:.85rem;color:rgba(255,255,255,.6);line-height:1.4;}
+.contact-form{display:flex;flex-direction:column;gap:14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:20px;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group label{font-size:.85rem;color:rgba(255,255,255,.6);margin-left:4px;}
+.form-input{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 14px;color:#fff;font-family:'Chewy',cursive;font-size:.95rem;outline:none;transition:border-color .3s ease,background .3s ease;}
+.form-input:focus{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.06)}
+textarea.form-input{resize:vertical;min-height:90px;}
+.error-text{color:#ff4a4a;font-size:.75rem;margin-left:4px;margin-top:2px;}
+.submit-btn{background:#fff;color:#000;border:none;border-radius:12px;padding:14px;font-family:'Chewy',cursive;font-size:1rem;cursor:pointer;transition:opacity .3s ease,transform .2s ease;margin-top:4px;}
+.submit-btn:hover:not(:disabled){opacity:.9;transform:translateY(-2px)}
+.submit-btn:active:not(:disabled){transform:translateY(0)}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;}
+.success-message{background:rgba(67, 181, 129, 0.15);border:1px solid rgba(67, 181, 129, 0.3);color:#43b581;padding:16px;border-radius:14px;text-align:center;font-size:1rem;}
+.music-toggle{position:fixed;bottom:20px;right:20px;z-index:26;width:44px;height:44px;border-radius:50%;background:rgba(20,20,24,.7);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:background .3s ease,color .3s ease;}
 .music-toggle:hover{background:rgba(255,255,255,.1);color:#fff}
-
 .yt-hidden{position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
-
-@media (prefers-reduced-motion:reduce){
-*,*::before,*::after{transition-duration:.01ms !important;animation-duration:.01ms !important;}
-.flash-gif{display:none}
-.heart-canvas{display:none}
-}
-
-@media (max-width:420px){
-.navbar{width:calc(100% - 20px);top:10px;padding:6px 4px;}
-.nav-item{padding:8px 12px;font-size:.8rem;gap:4px;}
-.nav-item svg{width:16px;height:16px;}
-.profile-section{gap:16px;padding:10px 0;}
-.avatar-wrap{width:90px;height:90px;}
-.profile-name{font-size:1.8rem;}
-.profile-handle{font-size:1rem;}
-.weather-time{font-size:1.8rem;}
-.weather-time .ampm{font-size:1rem;}
-.weather-temp{font-size:1.8rem;}
-.weather-icon{width:48px;height:48px;}
-.weather-days{gap:4px;}
-.weather-day-name{font-size:.6rem;}
-.weather-day-icon{width:24px;height:24px;}
-.weather-day-hi{font-size:.85rem;}
-.weather-day-lo{font-size:.7rem;}
-.music-toggle{bottom:14px;right:14px;width:40px;height:40px;}
-}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms !important;animation-duration:.01ms !important}.flash-gif{display:none}.heart-canvas{display:none}}
+@media (max-width:420px){.navbar{width:calc(100% - 20px);top:10px;padding:6px 4px;}.nav-item{padding:8px 12px;font-size:.8rem;gap:4px;}.nav-item svg{width:16px;height:16px;}.profile-section{gap:16px;padding:10px 0;}.avatar-wrap{width:80px;height:80px;}.profile-name{font-size:1.7rem;}.profile-handle{font-size:.9rem;}.weather-time{font-size:1.6rem;}.weather-time .ampm{font-size:.9rem;}.weather-temp{font-size:1.6rem;}.weather-icon{width:38px;height:38px;}.music-toggle{bottom:14px;right:14px;width:40px;height:40px;}}
 `;
 
 const YT_VIDEO_ID = 'Qy9LTRu89FA';
@@ -708,7 +166,7 @@ function useWeather() {
   const [data, setData] = useState(null);
   useEffect(() => {
     let alive = true;
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${WEATHER_LAT}&longitude=${WEATHER_LON}&current=temperature_2m,apparent_temperature,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Asia%2FKolkata&forecast_days=7`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${WEATHER_LAT}&longitude=${WEATHER_LON}&current=temperature_2m,apparent_temperature,weather_code,is_day&timezone=Asia%2FKolkata`;
     const fetchWeather = () => {
       fetch(url).then(r => r.json()).then(d => { if (alive) setData(d); }).catch(() => {});
     };
@@ -968,9 +426,7 @@ function MainPage({ presence, lastfm }) {
   const dateStr = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).toUpperCase();
   
   const cur = weather?.current;
-  const daily = weather?.daily;
   const toUnit = (c) => (c === null || c === undefined) ? '--' : Math.round(unit === 'C' ? c : (c * 9) / 5 + 32);
-  const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
   return (
     <div className="page-content">
@@ -1026,45 +482,27 @@ function MainPage({ presence, lastfm }) {
       ) : null}
 
       <div className="weather-card">
-        <div className="weather-top">
-          <div className="weather-left">
-            <div className="weather-time">{hours12}:{minutes}<span className="ampm">{ampm}</span></div>
-            <div className="weather-date">{dateStr}</div>
-          </div>
-          <div className="weather-mid">
-            <div className="weather-city">{WEATHER_CITY}</div>
-            <div className="weather-toggle">
-              <button className={unit === 'C' ? 'active' : ''} onClick={() => setUnit('C')}>C</button>
-              <button className={unit === 'F' ? 'active' : ''} onClick={() => setUnit('F')}>F</button>
-            </div>
-          </div>
-          <div className="weather-right">
-            {cur && (
-              <>
-                <svg className="weather-icon" viewBox="0 0 24 24"><WeatherIcon code={cur.weather_code} isDay={cur.is_day === 1} /></svg>
-                <div className="weather-temp">{toUnit(cur.temperature_2m)}°</div>
-                <div className="weather-cond">{weatherLabel(cur.weather_code)}</div>
-                <div className="weather-feels">feels like {toUnit(cur.apparent_temperature)}°</div>
-              </>
-            )}
+        <div className="weather-left">
+          <div className="weather-time">{hours12}:{minutes}<span className="ampm">{ampm}</span></div>
+          <div className="weather-date">{dateStr}</div>
+        </div>
+        <div className="weather-mid">
+          <div className="weather-city">{WEATHER_CITY}</div>
+          <div className="weather-toggle">
+            <button className={unit === 'C' ? 'active' : ''} onClick={() => setUnit('C')}>C</button>
+            <button className={unit === 'F' ? 'active' : ''} onClick={() => setUnit('F')}>F</button>
           </div>
         </div>
-        {daily && daily.time && (
-          <div className="weather-days">
-            {daily.time.map((t, i) => {
-              const d = new Date(t + 'T00:00:00');
-              const label = i === 0 ? 'TODAY' : dayNames[d.getDay()];
-              return (
-                <div className="weather-day" key={t}>
-                  <div className="weather-day-name">{label}</div>
-                  <svg className="weather-day-icon" viewBox="0 0 24 24"><WeatherIcon code={daily.weather_code[i]} isDay={true} /></svg>
-                  <div className="weather-day-hi">{toUnit(daily.temperature_2m_max[i])}°</div>
-                  <div className="weather-day-lo">{toUnit(daily.temperature_2m_min[i])}°</div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+        <div className="weather-right">
+          {cur && (
+            <>
+              <svg className="weather-icon" viewBox="0 0 24 24"><WeatherIcon code={cur.weather_code} isDay={cur.is_day === 1} /></svg>
+              <div className="weather-temp">{toUnit(cur.temperature_2m)}°</div>
+              <div className="weather-cond">{weatherLabel(cur.weather_code)}</div>
+              <div className="weather-feels">feels like {toUnit(cur.apparent_temperature)}°</div>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="socials">
