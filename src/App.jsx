@@ -29,9 +29,12 @@ transition:opacity .8s cubic-bezier(.25,.1,.25,1),visibility .8s;
 .gate.hidden{opacity:0;visibility:hidden;pointer-events:none}
 
 .gate-img{
+position:absolute;
+top:0;
+left:0;
 width:100vw;
 height:100vh;
-object-fit:contain;
+object-fit:cover;
 display:block;
 }
 
