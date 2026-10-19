@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useForm, ValidationError } from '@formspree/react';
 
 const styles = `
 @import url('https://fonts.googleapis.com/css2?family=Chewy&display=swap');
@@ -84,104 +85,21 @@ position:fixed;
 inset:0;
 z-index:50;
 display:flex;
-flex-direction:column;
 align-items:center;
 justify-content:center;
 background:#07070a;
-background-image:url('https://i.ibb.co/N6NNnnDv/nyx-blurry-1.webp');
-background-size:cover;
-background-position:center;
-background-repeat:no-repeat;
+cursor:pointer;
 transition:opacity .8s cubic-bezier(.25,.1,.25,1),visibility .8s;
-}
-
-.gate::before{
-content:'';
-position:absolute;
-inset:0;
-background:
-radial-gradient(circle at 50% 50%, rgba(0,0,0,.35), rgba(0,0,0,.8) 100%),
-linear-gradient(180deg, rgba(7,7,10,.4), rgba(7,7,10,.7));
-pointer-events:none;
-z-index:-1;
 }
 
 .gate.hidden{opacity:0;visibility:hidden;pointer-events:none}
 
-.gate-title{
-position:relative;
-font-size:clamp(2.4rem,9vw,4rem);
-color:#fff;
-letter-spacing:.02em;
-margin-bottom:8px;
-opacity:0;
-filter:blur(14px);
-animation:gateTitle 1.6s cubic-bezier(.25,.1,.25,1) .3s forwards;
-text-shadow:0 4px 24px rgba(0,0,0,.8);
+.gate-img{
+width:100vw;
+height:100vh;
+object-fit:cover;
+display:block;
 }
-
-@keyframes gateTitle{to{opacity:1;filter:blur(0)}}
-
-.gate-sub{
-position:relative;
-font-size:1rem;
-color:rgba(255,255,255,.55);
-letter-spacing:.08em;
-margin-bottom:36px;
-opacity:0;
-animation:gateSub 1.4s cubic-bezier(.25,.1,.25,1) 1.2s forwards;
-text-shadow:0 2px 12px rgba(0,0,0,.8);
-}
-
-@keyframes gateSub{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
-.gate-audio{
-position:relative;
-display:flex;
-align-items:center;
-gap:10px;
-margin-bottom:22px;
-padding:9px 16px;
-background:rgba(255,255,255,.06);
-border:1px solid rgba(255,255,255,.12);
-border-radius:999px;
-font-family:'Chewy',cursive;
-font-size:.85rem;
-letter-spacing:.06em;
-color:rgba(255,255,255,.75);
-cursor:pointer;
-backdrop-filter:blur(12px);
--webkit-backdrop-filter:blur(12px);
-opacity:0;
-animation:gateBtn 1.4s cubic-bezier(.25,.1,.25,1) 1.55s forwards;
-transition:background .3s ease,border-color .3s ease,color .3s ease;
-}
-
-.gate-audio:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:#fff}
-.gate-audio svg{width:14px;height:14px;fill:currentColor;flex-shrink:0}
-
-.enter-btn{
-position:relative;
-background:rgba(255,255,255,.06);
-border:1px solid rgba(255,255,255,.12);
-color:#fff;
-font-family:'Chewy',cursive;
-font-size:1.1rem;
-letter-spacing:.06em;
-padding:14px 42px;
-border-radius:999px;
-cursor:pointer;
-backdrop-filter:blur(12px);
--webkit-backdrop-filter:blur(12px);
-opacity:0;
-animation:gateBtn 1.4s cubic-bezier(.25,.1,.25,1) 1.8s forwards;
-transition:background .3s ease,border-color .3s ease,transform .3s ease;
-}
-
-@keyframes gateBtn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-
-.enter-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);transform:translateY(-2px)}
-.enter-btn:active{transform:translateY(0)}
 
 .navbar{
 position:fixed;
@@ -479,25 +397,41 @@ gap:14px;
 .progress-fill{height:100%;background:rgba(255,255,255,.6);transition:width 1s linear}
 .progress-time{display:flex;justify-content:space-between;font-size:.7rem;color:rgba(255,255,255,.35)}
 
-.socials{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:20px}
-
-.social{
-width:46px;
-height:46px;
-border-radius:50%;
-background:rgba(255,255,255,.03);
-border:1px solid rgba(255,255,255,.08);
-color:rgba(255,255,255,.6);
-display:flex;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-text-decoration:none;
-transition:background .3s ease,color .3s ease,transform .3s ease,border-color .3s ease;
+.socials-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:16px;
 }
 
-.social:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);color:#fff;transform:translateY(-2px)}
-.social svg{width:22px;height:22px;fill:currentColor}
+.social-card{
+background:rgba(255,255,255,.03);
+border:1px solid rgba(255,255,255,.08);
+border-radius:20px;
+padding:24px 20px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+gap:12px;
+text-decoration:none;
+color:#fff;
+transition:background .3s ease, transform .2s ease;
+}
+
+.social-card:hover{
+background:rgba(255,255,255,.06);
+transform:translateY(-3px);
+}
+
+.social-card svg{
+width:32px;
+height:32px;
+fill:currentColor;
+}
+
+.social-card-title{
+font-size:1.1rem;
+}
 
 .page-title{
 font-size:2rem;
@@ -511,31 +445,137 @@ color:rgba(255,255,255,.5);
 margin-bottom:20px;
 }
 
-.project-card{
-background:rgba(255,255,255,.03);
-border:1px solid rgba(255,255,255,.08);
-border-radius:20px;
-padding:20px;
-display:flex;
-flex-direction:column;
-gap:10px;
-transition:background .3s ease;
-cursor:pointer;
-text-decoration:none;
-color:inherit;
+/* Projects specific styling */
+.project-wide-card {
+background: rgba(255,255,255,.03);
+border: 1px solid rgba(255,255,255,.08);
+border-radius: 24px;
+overflow: hidden;
+display: flex;
+flex-direction: column;
+text-decoration: none;
+color: inherit;
+transition: transform .3s ease, border-color .3s ease;
+cursor: pointer;
 }
 
-.project-card:hover{background:rgba(255,255,255,.06)}
-
-.project-title{
-font-size:1.3rem;
-color:#fff;
+.project-wide-card:hover {
+transform: translateY(-4px);
+border-color: rgba(255,255,255,.15);
 }
 
-.project-desc{
-font-size:.95rem;
-color:rgba(255,255,255,.6);
-line-height:1.5;
+.project-preview {
+width: 100%;
+height: 200px;
+object-fit: cover;
+border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.project-content {
+padding: 20px;
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+.project-card-title {
+font-size: 1.4rem;
+color: #fff;
+}
+
+.project-card-desc {
+font-size: .95rem;
+color: rgba(255,255,255,.6);
+line-height: 1.5;
+}
+
+/* Contact form styling */
+.contact-form {
+display: flex;
+flex-direction: column;
+gap: 16px;
+background: rgba(255,255,255,.02);
+border: 1px solid rgba(255,255,255,.06);
+border-radius: 20px;
+padding: 24px;
+}
+
+.form-group {
+display: flex;
+flex-direction: column;
+gap: 6px;
+}
+
+.form-group label {
+font-size: .9rem;
+color: rgba(255,255,255,.6);
+margin-left: 4px;
+}
+
+.form-input {
+background: rgba(255,255,255,.04);
+border: 1px solid rgba(255,255,255,.08);
+border-radius: 14px;
+padding: 14px 16px;
+color: #fff;
+font-family: 'Chewy', cursive;
+font-size: 1rem;
+outline: none;
+transition: border-color .3s ease, background .3s ease;
+}
+
+.form-input:focus {
+border-color: rgba(255,255,255,.3);
+background: rgba(255,255,255,.06);
+}
+
+textarea.form-input {
+resize: vertical;
+min-height: 120px;
+}
+
+.error-text {
+color: #ff4a4a;
+font-size: .8rem;
+margin-left: 4px;
+margin-top: 2px;
+}
+
+.submit-btn {
+background: #fff;
+color: #000;
+border: none;
+border-radius: 14px;
+padding: 16px;
+font-family: 'Chewy', cursive;
+font-size: 1.1rem;
+cursor: pointer;
+transition: opacity .3s ease, transform .2s ease;
+margin-top: 8px;
+}
+
+.submit-btn:hover:not(:disabled) {
+opacity: .9;
+transform: translateY(-2px);
+}
+
+.submit-btn:active:not(:disabled) {
+transform: translateY(0);
+}
+
+.submit-btn:disabled {
+opacity: .5;
+cursor: not-allowed;
+}
+
+.success-message {
+background: rgba(67, 181, 129, 0.15);
+border: 1px solid rgba(67, 181, 129, 0.3);
+color: #43b581;
+padding: 16px;
+border-radius: 14px;
+text-align: center;
+font-size: 1.1rem;
 }
 
 .music-toggle{
@@ -563,11 +603,8 @@ transition:background .3s ease,color .3s ease;
 
 .yt-hidden{position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
 
-.preload-img{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;top:0;left:0}
-
 @media (prefers-reduced-motion:reduce){
 *,*::before,*::after{transition-duration:.01ms !important;animation-duration:.01ms !important;}
-.gate-title,.gate-sub,.enter-btn,.gate-audio{opacity:1;filter:blur(0);animation:none}
 .flash-gif{display:none}
 .heart-canvas{display:none}
 }
@@ -593,24 +630,24 @@ transition:background .3s ease,color .3s ease;
 }
 `;
 
-const YT_VIDEO_ID = 'Sv-hdv89Sv8';
+const YT_VIDEO_ID = 'Qy9LTRu89FA';
 const YT_VOLUME = 55;
 const DISCORD_ID = '1429093326505640016';
 const LASTFM_USER = 'Nyxieepie';
 const LASTFM_KEY = '93b1e25b8d9f0ff55175904af9b336b7';
 const BG_GIF = 'https://i.ibb.co/VWgztGwR/d895c222e5fe92cb334de04e6d8f6828.gif';
 const FLASH_GIF = 'https://i.ibb.co/fV5RJRSH/328c881f1929b778adcc7d9c1c75adcd.gif';
-const LOADING_BG = 'https://i.ibb.co/N6NNnnDv/nyx-blurry-1.webp';
+const LOADING_IMG = 'https://i.ibb.co/QLdmZj7/7e2bfb2629b8e72826b818a5e749839b.jpg';
+const BLURRY_PREVIEW = 'https://i.ibb.co/N6NNnnDv/nyx-blurry-1.webp';
 const WEATHER_LAT = 28.6139;
 const WEATHER_LON = 77.2090;
 const WEATHER_CITY = 'Delhi';
+const SITE_URL = 'https://dontcare-dev.github.io/Nyxieepieee/';
 
 const SOCIALS = {
   instagram: 'https://instagram.com/Deathyyyyyyyyyy',
   server: 'https://discord.gg/Y7mKtX9Bd',
-  sds: 'https://silver-dev-studios.github.io/SDS/',
-  spitari: 'https://spitari.win/',
-  sdsEditor: 'https://dontcare-dev.github.io/SDS-code-editor-/'
+  sds: 'https://silver-dev-studios.github.io/SDS/'
 };
 
 const STROKE = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round' };
@@ -1046,46 +1083,61 @@ function ProjectsPage() {
   return (
     <div className="page-content">
       <h1 className="page-title">Projects</h1>
-      <p className="page-subtitle">Things I've built and worked on.</p>
+      <p className="page-subtitle">Things I've built.</p>
       
-      <a className="project-card" href={SOCIALS.sds} target="_blank" rel="noopener noreferrer">
-        <h3 className="project-title">Silver Dev Studios</h3>
-        <p className="project-desc">The main hub for my web development and design work. Featuring profiles, Discord bots, and web tools.</p>
-      </a>
-      
-      <a className="project-card" href={SOCIALS.sdsEditor} target="_blank" rel="noopener noreferrer">
-        <h3 className="project-title">SDS Code Editor</h3>
-        <p className="project-desc">A browser-based code editor built for the Silver Dev Studios platform.</p>
-      </a>
-      
-      <a className="project-card" href={SOCIALS.spitari} target="_blank" rel="noopener noreferrer">
-        <h3 className="project-title">Spitari</h3>
-        <p className="project-desc">A project developed alongside the team at spitari.win.</p>
+      <a className="project-wide-card" href={SITE_URL} target="_blank" rel="noopener noreferrer">
+        <img src={BLURRY_PREVIEW} alt="Nyxieepieee Preview" className="project-preview" />
+        <div className="project-content">
+          <h3 className="project-card-title">Nyxieepieee</h3>
+          <p className="project-card-desc">My personal portfolio and bio site. Built with React, featuring live Discord presence, Last.fm integration, and custom animations.</p>
+        </div>
       </a>
     </div>
   );
 }
 
 function ContactPage() {
+  const [state, handleSubmit] = useForm('mvkznwzw');
+
+  if (state.succeeded) {
+    return (
+      <div className="page-content">
+        <h1 className="page-title">Contact</h1>
+        <div className="success-message">
+          Thanks for reaching out! I'll get back to you soon.
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="page-content">
       <h1 className="page-title">Contact</h1>
       <p className="page-subtitle">Get in touch with me.</p>
       
-      <a className="project-card" href={`https://discord.com/users/${DISCORD_ID}`} target="_blank" rel="noopener noreferrer">
-        <h3 className="project-title">Discord</h3>
-        <p className="project-desc">Add me on Discord: @nyx</p>
-      </a>
-      
-      <a className="project-card" href={SOCIALS.instagram} target="_blank" rel="noopener noreferrer">
-        <h3 className="project-title">Instagram</h3>
-        <p className="project-desc">Follow me: @Deathyyyyyyyyyy</p>
-      </a>
+      <form className="contact-form" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="name">Name</label>
+          <input id="name" type="text" name="name" required className="form-input" placeholder="Your name" />
+          <ValidationError prefix="Name" field="name" errors={state.errors} className="error-text" />
+        </div>
 
-      <a className="project-card" href={SOCIALS.server} target="_blank" rel="noopener noreferrer">
-        <h3 className="project-title">Discord Server</h3>
-        <p className="project-desc">Join my community server.</p>
-      </a>
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input id="email" type="email" name="email" required className="form-input" placeholder="your@email.com" />
+          <ValidationError prefix="Email" field="email" errors={state.errors} className="error-text" />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="message">Message</label>
+          <textarea id="message" name="message" required className="form-input" placeholder="What's on your mind?" />
+          <ValidationError prefix="Message" field="message" errors={state.errors} className="error-text" />
+        </div>
+
+        <button type="submit" disabled={state.submitting} className="submit-btn">
+          {state.submitting ? 'Sending...' : 'Send Message'}
+        </button>
+      </form>
     </div>
   );
 }
@@ -1120,7 +1172,6 @@ export default function App() {
     <>
       <style>{styles}</style>
 
-      <img className="preload-img" src={LOADING_BG} alt="" aria-hidden="true" />
       <img className="bg-gif" src={BG_GIF} alt="" aria-hidden="true" />
       <div className="bg-overlay" />
       
@@ -1129,16 +1180,8 @@ export default function App() {
       <img className={`flash-gif ${flashOn ? 'active' : ''}`} src={FLASH_GIF} alt="" aria-hidden="true" />
       <div id="ytAudio" className="yt-hidden" />
 
-      <div className={`gate ${entered ? 'hidden' : ''}`}>
-        <h1 className="gate-title">Nyxieepieee</h1>
-        <p className="gate-sub">Meowmeow</p>
-        <button className="gate-audio" onClick={() => setMusicOn((v) => !v)} aria-label={musicOn ? 'Disable music' : 'Enable music'}>
-          <svg viewBox="0 0 24 24">
-            {musicOn ? <path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z" /> : <path d="M12 3v10.55a4 4 0 1 0 2 3.45V7h4V3h-6zM3.27 2 2 3.27l18.73 18.73L22 20.73 3.27 2z" />}
-          </svg>
-          {musicOn ? 'Music On' : 'Music Off'}
-        </button>
-        <button className="enter-btn" onClick={() => setEntered(true)}>Enter</button>
+      <div className={`gate ${entered ? 'hidden' : ''}`} onClick={() => setEntered(true)}>
+        <img src={LOADING_IMG} alt="Enter" className="gate-img" />
       </div>
 
       {entered && (
