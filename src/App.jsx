@@ -29,10 +29,8 @@ transition:opacity .8s cubic-bezier(.25,.1,.25,1),visibility .8s;
 .gate.hidden{opacity:0;visibility:hidden;pointer-events:none}
 
 .gate-img{
-max-width:100vw;
-max-height:100vh;
-width:100%;
-height:auto;
+width:100vw;
+height:100vh;
 object-fit:contain;
 display:block;
 }
@@ -388,4 +386,300 @@ function useHearts(canvasRef) {
         hearts[i].draw();
         if (hearts[i].opacity <= 0) hearts.splice(i, 1);
       }
-      animationId = requestAnimationFrame(animate
+      animationId = requestAnimationFrame(animate);
+    };
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('touchmove', onTouchMove);
+      cancelAnimationFrame(animationId);
+    };
+  }, [canvasRef]);
+}
+
+function ProgressBar({ start, end }) {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    const update = () => {
+      const now = Date.now();
+      const total = end - start;
+      const elapsed = now - start;
+      setProgress(Math.min(Math.max((elapsed / total) * 100, 0), 100));
+    };
+    update();
+    const i = setInterval(update, 1000);
+    return () => clearInterval(i);
+  }, [start, end]);
+  const fmt = (ms) => {
+    const s = Math.floor(ms / 1000);
+    return `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
+  };
+  const now = Date.now();
+  return (
+    <div className="progress-container">
+      <div className="progress-bar"><div className="progress-fill" style={{ width: `${progress}%` }} /></div>
+      <div className="progress-time"><span>{fmt(Math.max(now - start, 0))}</span><span>{fmt(end - start)}</span></div>
+    </div>
+  );
+}
+
+function MainPage({ presence, lastfm }) {
+  const [img, setImg] = useState(null);
+  const [status, setStatus] = useState('offline');
+  
+  useEffect(() => {
+    if (!presence) return;
+    const u = presence.discord_user;
+    if (!u) return;
+    setImg(u.avatar ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png?size=256` : `https://cdn.discordapp.com/embed/avatars/0.png`);
+    setStatus(presence.discord_status);
+  }, [presence]);
+
+  const statusColor = { online: '#43b581', idle: '#faa61a', dnd: '#f04747', offline: '#747f8d' }[status] || '#747f8d';
+  const liveName = presence?.discord_user?.username || 'nyx';
+
+  const activities = presence?.activities || [];
+  const spotify = presence?.spotify;
+  const listening = presence?.listening_to_spotify;
+  const custom = activities.find((a) => a.type === 4);
+  const game = activities.find((a) => a.type !== 4 && a.name !== 'Spotify');
+
+  const now = useClock();
+  const weather = useWeather();
+  const [unit, setUnit] = useState('C');
+  
+  const hours12 = now.getHours() % 12 || 12;
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+  const dateStr = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).toUpperCase();
+  
+  const cur = weather?.current;
+  const toUnit = (c) => (c === null || c === undefined) ? '--' : Math.round(unit === 'C' ? c : (c * 9) / 5 + 32);
+
+  return (
+    <div className="page-content">
+      <div className="profile-section">
+        <div className="avatar-wrap">
+          {img ? <img src={img} alt="" className="avatar" /> : <div className="avatar" />}
+          <span className="status-dot" style={{ background: statusColor }} />
+        </div>
+        <div className="profile-info">
+          <h1 className="profile-name">{liveName}</h1>
+          <p className="profile-handle">@nyx</p>
+          <p className="profile-bio">Web development and bot developer i am nyx.<br/>I am 15 years old. I love life.</p>
+        </div>
+      </div>
+
+      {listening && spotify ? (
+        <div className="activity-card">
+          <img src={spotify.album_art_url} alt="" className="activity-icon" />
+          <div className="activity-text">
+            <p className="activity-name">{spotify.song}</p>
+            <p className="activity-sub">{spotify.artist}</p>
+            <p className="activity-source">Spotify</p>
+            {spotify.timestamps && <ProgressBar start={spotify.timestamps.start} end={spotify.timestamps.end} />}
+          </div>
+        </div>
+      ) : game ? (
+        <div className="activity-card">
+          {game.assets?.large_image ? (
+            <img src={game.assets.large_image.startsWith('mp:') ? `https://media.discordapp.net/${game.assets.large_image.slice(3)}` : `https://cdn.discordapp.com/app-assets/${game.application_id}/${game.assets.large_image}.png`} alt="" className="activity-icon" />
+          ) : <div className="activity-icon" />}
+          <div className="activity-text">
+            <p className="activity-name">{game.name}</p>
+            <p className="activity-sub">{game.details || game.state || 'Playing'}</p>
+          </div>
+        </div>
+      ) : lastfm ? (
+        <div className="activity-card">
+          {lastfm.image ? <img src={lastfm.image} alt="" className="activity-icon" /> : <div className="activity-icon" />}
+          <div className="activity-text">
+            <p className="activity-name">{lastfm.name}</p>
+            <p className="activity-sub">{lastfm.artist}</p>
+            <p className="activity-source"><LastfmIcon />{lastfm.nowPlaying ? 'Now Playing' : 'Last Played'}</p>
+          </div>
+        </div>
+      ) : custom ? (
+        <div className="activity-card">
+          <div className="activity-icon" />
+          <div className="activity-text">
+            <p className="activity-name">{custom.emoji?.name} {custom.state}</p>
+            <p className="activity-sub">Custom Status</p>
+          </div>
+        </div>
+      ) : null}
+
+      <div className="weather-card">
+        <div className="weather-left">
+          <div className="weather-time">{hours12}:{minutes}<span className="ampm">{ampm}</span></div>
+          <div className="weather-date">{dateStr}</div>
+        </div>
+        <div className="weather-mid">
+          <div className="weather-city">{WEATHER_CITY}</div>
+          <div className="weather-toggle">
+            <button className={unit === 'C' ? 'active' : ''} onClick={() => setUnit('C')}>C</button>
+            <button className={unit === 'F' ? 'active' : ''} onClick={() => setUnit('F')}>F</button>
+          </div>
+        </div>
+        <div className="weather-right">
+          {cur && (
+            <>
+              <svg className="weather-icon" viewBox="0 0 24 24"><WeatherIcon code={cur.weather_code} isDay={cur.is_day === 1} /></svg>
+              <div className="weather-temp">{toUnit(cur.temperature_2m)}°</div>
+              <div className="weather-cond">{weatherLabel(cur.weather_code)}</div>
+              <div className="weather-feels">feels like {toUnit(cur.apparent_temperature)}°</div>
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className="socials">
+        <a className="social" href={`https://discord.com/users/${DISCORD_ID}`} target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24"><path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" /></svg>
+        </a>
+        <a className="social" href={SOCIALS.instagram} target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" /></svg>
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function ProjectsPage() {
+  return (
+    <div className="page-content">
+      <h1 className="page-title">Projects</h1>
+      <p className="page-subtitle">Things I've built.</p>
+      
+      <a className="project-wide-card" href={SITE_URL} target="_blank" rel="noopener noreferrer">
+        <img src={BLURRY_PREVIEW} alt="Nyxieepieee Preview" className="project-preview" />
+        <div className="project-content">
+          <h3 className="project-card-title">Nyxieepieee</h3>
+          <p className="project-card-desc">My personal portfolio and bio site. Built with React, featuring live Discord presence, Last.fm integration, and custom animations.</p>
+        </div>
+      </a>
+    </div>
+  );
+}
+
+function ContactPage() {
+  const [state, handleSubmit] = useForm('mvkznwzw');
+
+  if (state.succeeded) {
+    return (
+      <div className="page-content">
+        <h1 className="page-title">Contact</h1>
+        <div className="success-message">
+          Thanks for reaching out! I'll get back to you soon.
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="page-content">
+      <h1 className="page-title">Contact</h1>
+      <p className="page-subtitle">Get in touch with me.</p>
+      
+      <form className="contact-form" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="name">Name</label>
+          <input id="name" type="text" name="name" required className="form-input" placeholder="Your name" />
+          <ValidationError prefix="Name" field="name" errors={state.errors} className="error-text" />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input id="email" type="email" name="email" required className="form-input" placeholder="your@email.com" />
+          <ValidationError prefix="Email" field="email" errors={state.errors} className="error-text" />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="message">Message</label>
+          <textarea id="message" name="message" required className="form-input" placeholder="What's on your mind?" />
+          <ValidationError prefix="Message" field="message" errors={state.errors} className="error-text" />
+        </div>
+
+        <button type="submit" disabled={state.submitting} className="submit-btn">
+          {state.submitting ? 'Sending...' : 'Send Message'}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+export default function App() {
+  const [entered, setEntered] = useState(false);
+  const [musicOn, setMusicOn] = useState(true);
+  const [flashOn, setFlashOn] = useState(false);
+  const [activeTab, setActiveTab] = useState('home');
+  const canvasRef = useRef(null);
+
+  const presence = useLanyard(DISCORD_ID);
+  const lastfm = useLastfm();
+  
+  useHearts(canvasRef);
+  useYouTubeAudio(entered && musicOn);
+
+  useEffect(() => {
+    if (!entered) return;
+    let timeoutId;
+    const interval = setInterval(() => {
+      setFlashOn(true);
+      timeoutId = setTimeout(() => setFlashOn(false), 2000);
+    }, 18000);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeoutId);
+    };
+  }, [entered]);
+
+  return (
+    <>
+      <style>{styles}</style>
+
+      <img className="bg-gif" src={BG_GIF} alt="" aria-hidden="true" />
+      <div className="bg-overlay" />
+      
+      <canvas ref={canvasRef} className="heart-canvas" />
+
+      <img className={`flash-gif ${flashOn ? 'active' : ''}`} src={FLASH_GIF} alt="" aria-hidden="true" />
+      <div id="ytAudio" className="yt-hidden" />
+
+      <div className={`gate ${entered ? 'hidden' : ''}`} onClick={() => setEntered(true)}>
+        <img src={LOADING_IMG} alt="Enter" className="gate-img" />
+      </div>
+
+      {entered && (
+        <>
+          <nav className="navbar">
+            <button className={`nav-item ${activeTab === 'home' ? 'active' : ''}`} onClick={() => setActiveTab('home')}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              home
+            </button>
+            <button className={`nav-item ${activeTab === 'projects' ? 'active' : ''}`} onClick={() => setActiveTab('projects')}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              projects
+            </button>
+            <button className={`nav-item ${activeTab === 'contact' ? 'active' : ''}`} onClick={() => setActiveTab('contact')}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              contact
+            </button>
+          </nav>
+
+          <div className="app">
+            {activeTab === 'home' && <MainPage presence={presence} lastfm={lastfm} />}
+            {activeTab === 'projects' && <ProjectsPage />}
+            {activeTab === 'contact' && <ContactPage />}
+          </div>
+
+          <button className="music-toggle" onClick={() => setMusicOn((v) => !v)} aria-label={musicOn ? 'Mute music' : 'Unmute music'}>
+            {musicOn ? '♪' : '✕'}
+          </button>
+        </>
+      )}
+    </>
+  );
+}
