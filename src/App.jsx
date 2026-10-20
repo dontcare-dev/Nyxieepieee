@@ -20,6 +20,7 @@ position:fixed;
 inset:0;
 z-index:50;
 display:flex;
+flex-direction:column;
 align-items:center;
 justify-content:center;
 background:#07070a;
@@ -28,14 +29,40 @@ transition:opacity .8s cubic-bezier(.25,.1,.25,1),visibility .8s;
 }
 .gate.hidden{opacity:0;visibility:hidden;pointer-events:none}
 
-.gate-img{
-position:absolute;
-top:0;
-left:0;
-width:100vw;
-height:100vh;
-object-fit:contain;
-display:block;
+.gate-title{
+font-size:3rem;
+color:#fff;
+letter-spacing:.05em;
+opacity:0;
+animation:fadeInTitle 1s ease .2s forwards;
+text-shadow:0 0 20px rgba(255,255,255,0.2);
+}
+.gate-subtitle{
+font-size:1.1rem;
+color:rgba(255,255,255,.4);
+margin-top:8px;
+margin-bottom:40px;
+opacity:0;
+animation:fadeInTitle 1s ease .6s forwards;
+}
+
+@keyframes fadeInTitle {
+to { opacity:1; transform:translateY(0); }
+}
+
+.gate-spinner{
+width:32px;
+height:32px;
+border:3px solid rgba(255,255,255,0.1);
+border-top-color:#fff;
+border-radius:50%;
+animation:spin 1s linear infinite;
+opacity:0;
+animation:spin 1s linear infinite, fadeInTitle 1s ease 1s forwards;
+}
+
+@keyframes spin {
+to { transform:rotate(360deg); }
 }
 
 .navbar{position:fixed;top:14px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:440px;z-index:30;background:rgba(14,14,18,.82);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:6px 8px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);box-shadow:0 8px 32px rgba(0,0,0,.5);}
@@ -128,7 +155,6 @@ const LASTFM_USER = 'Nyxieepie';
 const LASTFM_KEY = '93b1e25b8d9f0ff55175904af9b336b7';
 const BG_GIF = 'https://i.ibb.co/VWgztGwR/d895c222e5fe92cb334de04e6d8f6828.gif';
 const FLASH_GIF = 'https://i.ibb.co/fV5RJRSH/328c881f1929b778adcc7d9c1c75adcd.gif';
-const LOADING_IMG = 'https://i.ibb.co/8L02zTZH/11579.gif';
 const BLURRY_PREVIEW = 'https://i.ibb.co/N6NNnnDv/nyx-blurry-1.webp';
 const WEATHER_LAT = 28.6139;
 const WEATHER_LON = 77.2090;
@@ -652,7 +678,9 @@ export default function App() {
       <div id="ytAudio" className="yt-hidden" />
 
       <div className={`gate ${entered ? 'hidden' : ''}`} onClick={() => setEntered(true)}>
-        <img src={LOADING_IMG} alt="Enter" className="gate-img" />
+        <h1 className="gate-title">Nyxieepieee</h1>
+        <p className="gate-subtitle">loading experience...</p>
+        <div className="gate-spinner"></div>
       </div>
 
       {entered && (
